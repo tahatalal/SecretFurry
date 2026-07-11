@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#090b18" />
+    <title>Secret Furry — The Velvet Jackal</title>
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/profiles.css" />
+    <link rel="stylesheet" href="styles/sources.css" />
+    <link rel="stylesheet" href="styles/effects.css" />
+  </head>
+  <body data-phase="public">
+    <div class="crt-layer" aria-hidden="true"></div>
+    <div class="ambient-shapes" aria-hidden="true"><i></i><i></i><i></i></div>
+
+    <main class="game" id="game" aria-label="Secret Furry investigation game">
+      <header class="mastbar">
+        <div class="wordmark">
+          <span class="wordmark-sigil" aria-hidden="true">✦</span>
+          <div><small>BELLWETHER // PRIVATE CONTEXT DESK</small><h1>SECRET <em>FURRY</em></h1></div>
+        </div>
+        <div class="case-chip"><span>CASE 01</span><b>THE VELVET JACKAL</b></div>
+        <div class="signal-chip"><i></i><span id="signalLabel">SIGNAL QUIET</span></div>
+        <div class="top-actions">
+          <button id="soundButton" type="button" aria-label="Toggle sound" title="Toggle sound">♪</button>
+          <button id="resetButton" type="button" aria-label="Restart case" title="Restart case">↻</button>
+        </div>
+      </header>
+
+      <section class="workspace">
+        <section class="profile-side" id="profileSide" aria-labelledby="profileHeading">
+          <header class="side-heading">
+            <div><span>CASE PROFILES</span><h2 id="profileHeading">Active dossier</h2></div>
+            <div class="view-switch" role="group" aria-label="Profile view">
+              <button class="active" data-profile-view="detail" type="button">DOSSIER</button>
+              <button data-profile-view="network" type="button">NETWORK</button>
+            </div>
+          </header>
+          <div class="profile-stage" id="profileStage"></div>
+          <nav class="profile-rail" id="profileRail" aria-label="Discovered profiles"></nav>
+        </section>
+
+        <div class="data-seam" aria-hidden="true"><i></i><span>DATA FLOW</span></div>
+
+        <section class="source-side" aria-labelledby="sourceHeading">
+          <header class="side-heading source-heading">
+            <div><span>READER</span><h2 id="sourceHeading">Inbox &amp; sources</h2></div>
+            <p id="sourceHint">Open an email lead. Pull marked information into the active dossier.</p>
+          </header>
+
+          <nav class="reader-tabs" aria-label="Open investigation sources">
+            <button class="inbox-tab active" id="inboxTab" data-open-inbox type="button">INBOX <span id="inboxBadge">0</span></button>
+            <div class="opened-source-tabs" id="openedSourceTabs"></div>
+          </nav>
+
+          <div class="reader-workspace">
+            <aside class="inbox" id="inboxPanel" aria-labelledby="inboxHeading">
+              <div class="inbox-title"><span id="inboxHeading">LEAD INBOX</span><i id="mailPulse"></i></div>
+              <div class="inbox-lede"><div><small>SECURE CASE RELAY</small><h3>Available leads</h3><p>Each message points to a live data source. Open one to leave the inbox and inspect its linked page.</p></div><strong id="availableLeadCount">0 LEADS</strong></div>
+              <div id="emailList" class="email-list"></div>
+              <footer><span>ENCRYPTED LOCAL RELAY</span><b id="caseClock">23:17:08</b></footer>
+            </aside>
+            <article class="reader hidden" id="reader" aria-live="polite"></article>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <section class="modal-layer" id="introModal" aria-labelledby="introTitle">
+      <div class="intro-card game-card">
+        <span class="intro-sigil">✦</span>
+        <small>BELLWETHER CONTEXT DESK</small>
+        <h2 id="introTitle">SECRET <em>FURRY</em></h2>
+        <p class="case-subtitle">CASE 01 — THE VELVET JACKAL</p>
+        <div class="pixel-rule"></div>
+        <p>A black-and-gold jackal won Moonrise's midnight masquerade, lost their costume head, and vanished. A gossip feed will expose the performer by 02:00. Find Velvet Static—but remember that knowing an identity does not make it yours to publish.</p>
+        <div class="intro-steps"><span>OPEN LEADS</span><span>CREATE PROFILES</span><span>READ CONTEXT</span></div>
+        <button class="primary-action" id="startButton" type="button">ENTER THE CASE <b>→</b></button>
+      </div>
+    </section>
+
+    <section class="modal-layer hidden" id="deductionModal" aria-labelledby="deductionTitle">
+      <div class="deduction-card game-card">
+        <span class="match-sigil">◇</span>
+        <small>STABLE IDENTITY PATTERN</small>
+        <h2 id="deductionTitle">THE SIGNAL HAS A NAME</h2>
+        <div id="deductionPillars" class="deduction-pillars"></div>
+        <p>The independent trails agree. Review the recovered image before deciding what to do with the identity.</p>
+        <button class="primary-action" id="revealButton" type="button">RECONSTRUCT IMAGE <b>→</b></button>
+      </div>
+    </section>
+
+    <section class="modal-layer hidden" id="revealModal" aria-labelledby="revealTitle">
+      <div class="reveal-card game-card">
+        <div class="reveal-photo"><img src="assets/reveal/velvet-jackal-reveal.png" alt="Recovered pixel-art photograph of Nadia Serin wearing the black-and-gold Velvet Static jackal fursuit while holding its head" /><span class="scan-pass"></span></div>
+        <div class="reveal-copy">
+          <small>RECOVERED IMAGE // BACK_2349</small>
+          <h2 id="revealTitle">NADIA SERIN IS <em>VELVET STATIC</em></h2>
+          <p>The image confirms the jackal, the headless lounge and the performer. It does not give anyone consent to expose her.</p>
+          <button class="primary-action" id="confrontButton" type="button">CONTACT VELVET STATIC <b>→</b></button>
+        </div>
+      </div>
+    </section>
+
+    <section class="modal-layer hidden" id="decisionModal" aria-labelledby="decisionTitle">
+      <div class="decision-card game-card">
+        <small>PRIVATE CHANNEL // VELVET STATIC</small>
+        <h2 id="decisionTitle">“You were supposed to find my head. You found me.”</h2>
+        <div class="final-chat">
+          <p><b>VELVET STATIC</b>The jackal is not a prank and not a scandal. She is how I enter a room without first becoming the museum's opinion of me.</p>
+          <p><b>NADIA</b>Return the head. Delete the lounge footage. What happens to my name should still be my decision.</p>
+        </div>
+        <div class="decision-actions">
+          <button data-ending="protect" type="button"><strong>RETURN IT PRIVATELY</strong><span>Protect Nadia and report the camera violation</span></button>
+          <button data-ending="confront" type="button"><strong>GIVE NADIA CONTROL</strong><span>Let her choose whether to reveal Velvet</span></button>
+          <button data-ending="reveal" type="button"><strong>FULL DISCLOSURE</strong><span>Name Nadia Serin as Velvet Static</span></button>
+        </div>
+        <p id="endingText" class="ending-text"></p>
+      </div>
+    </section>
+
+    <script src="src/case-data.js"></script>
+    <script src="src/app.js"></script>
+  </body>
+</html>

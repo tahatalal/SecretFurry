@@ -1,0 +1,23 @@
+body[data-phase="suspect"] { --violet:#c578ff; --pink:#f784c9; background:#0d0a1a; }
+body[data-phase="suspect"] .mastbar{background:linear-gradient(90deg,#1c1737,#0e1227 60%,#271538)}
+body[data-phase="suspect"] .data-seam i{background:linear-gradient(transparent,var(--violet),transparent);box-shadow:0 0 12px var(--violet)}
+body[data-phase="suspect"] .wordmark-sigil{animation:sigil-blink 2.4s steps(2) infinite}@keyframes sigil-blink{50%{filter:brightness(1.5)}}
+
+body[data-phase="private"] { --line:#64457b; --line-soft:rgba(217,148,234,.2); --muted:#b5a1c3; --cyan:#72e4d5; --violet:#dd7be5; --amber:#ffd060; background:#1a0d2a; }
+body[data-phase="private"] .ambient-shapes{background:radial-gradient(circle at 18% 12%,rgba(236,102,196,.15),transparent 27%),radial-gradient(circle at 86% 80%,rgba(84,216,202,.12),transparent 27%),#160c26}
+body[data-phase="private"] .mastbar{background:linear-gradient(90deg,#351943,#15102c 60%,#421d45)}
+body[data-phase="private"] .dossier,body[data-phase="private"] .profile-rail,body[data-phase="private"] .reader-tabs,body[data-phase="private"] .reader-workspace{border-radius:7px}
+body[data-phase="private"] .fact-group{background:linear-gradient(145deg,#211436,#16122c)}
+body[data-phase="private"] .data-seam span::before{content:"⌁ ";color:var(--pink)}
+
+body[data-phase="foxfire"] { --line:#af70b1; --line-soft:rgba(255,197,238,.25); --paper:#fff3ff; --muted:#ddb8df; --cyan:#88f1d8; --violet:#f08ddd; --pink:#ff9cdd; --amber:#ffe078; background:#2c103f; }
+body[data-phase="foxfire"] .ambient-shapes{background:radial-gradient(circle at 14% 15%,rgba(252,119,198,.25),transparent 26%),radial-gradient(circle at 85% 81%,rgba(97,226,206,.19),transparent 29%),#29103d}
+body[data-phase="foxfire"] .mastbar{background:linear-gradient(90deg,#51205d,#28163f 60%,#65315d);border-radius:11px 11px 0 0}
+body[data-phase="foxfire"] .workspace{border-radius:0 0 12px 12px}.profile-side,.source-side{background-color:rgba(30,14,46,.68)!important}
+body[data-phase="foxfire"] .dossier,body[data-phase="foxfire"] .profile-rail,body[data-phase="foxfire"] .reader-tabs,body[data-phase="foxfire"] .reader-workspace,body[data-phase="foxfire"] .network-board{border-radius:11px}
+body[data-phase="foxfire"] .wordmark-sigil{color:var(--pink);animation:fox-hop .65s steps(2) infinite alternate}@keyframes fox-hop{to{transform:translateY(-2px) rotate(5deg)}}
+body[data-phase="foxfire"] .data-seam{background:#1c0e2e;border-color:#a96ca9}body[data-phase="foxfire"] .data-seam span{color:#da9fce}body[data-phase="foxfire"] .data-seam span::before{content:"〰 ";color:var(--pink)}
+body[data-phase="foxfire"] .profile-note::after{content:"✦";float:right;color:var(--pink)}
+body[data-phase="foxfire"] .view-switch button:first-child::before{content:"◥ ";color:var(--pink)}body[data-phase="foxfire"] .view-switch button:last-child::after{content:" ◤";color:var(--pink)}
+
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}}
