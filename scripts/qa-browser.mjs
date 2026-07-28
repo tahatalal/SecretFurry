@@ -53,14 +53,14 @@ await send("Page.reload", { ignoreCache: true });
 await wait(500);
 
 const title = await evaluate("document.title");
-if (title !== "Secret Furry — The Velvet Jackal") throw new Error(`Unexpected title: ${title}`);
+if (title !== "Secret Furry — The Quiet Account") throw new Error(`Unexpected title: ${title}`);
 await evaluate("localStorage.clear(); location.reload()");
 await wait(500);
 await evaluate("document.querySelector('#startButton').click()");
 
-const sourceOrder = ["moonrise_news", "expo_directory", "afterdark_chat", "lumen_thread", "anime_forum", "ren_portfolio", "event_logs", "backstage_archive", "private_dm"];
+const sourceOrder = ["moonrise_site", "blue_thread", "discord_lounge", "wildselves_forum", "telegram_meetup", "art_gallery", "imessage_thread", "proposal_portal", "velvet_dm"];
 const initialLeads = await evaluate("[...document.querySelectorAll('#emailList [data-source]')].map((element) => element.dataset.source)");
-if (initialLeads.join(",") !== "moonrise_news,expo_directory") throw new Error(`Inbox exposed the wrong initial leads: ${initialLeads.join(",")}`);
+if (initialLeads.join(",") !== "moonrise_site,blue_thread") throw new Error(`Inbox exposed the wrong initial leads: ${initialLeads.join(",")}`);
 const disabledLeads = await evaluate("document.querySelectorAll('#emailList [data-source]:disabled').length");
 if (disabledLeads) throw new Error("Inbox must not expose disabled future leads.");
 for (const sourceId of sourceOrder) {
@@ -70,7 +70,7 @@ for (const sourceId of sourceOrder) {
   await evaluate(`document.querySelector('#emailList [data-source="${sourceId}"]').click()`);
   const sourceReplacedInbox = await evaluate("document.querySelector('#inboxPanel').classList.contains('hidden') && !document.querySelector('#reader').classList.contains('hidden')");
   if (!sourceReplacedInbox) throw new Error(`Opening ${sourceId} did not replace the Inbox with the source.`);
-  if (sourceId === "expo_directory" && screenshotPath) {
+  if (sourceId === "discord_lounge" && screenshotPath) {
     await wait(200);
     const capture = await send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
     const { writeFile } = await import("node:fs/promises");
@@ -82,13 +82,28 @@ for (const sourceId of sourceOrder) {
     if (data.kind !== "identity") {
       const target = data.kind === "relationship" ? data.endpoints[0] : data.person;
       const profileExists = await evaluate(`Boolean(document.querySelector('[data-rail-person="${target}"]'))`);
-      if (!profileExists) throw new Error(`Missing target profile ${target} for ${chunkId}`);
+      if (!profileExists) continue;
       await evaluate(`document.querySelector('[data-rail-person="${target}"]').click()`);
     }
     await evaluate(`document.querySelector('[data-chunk="${chunkId}"]').click()`);
     await evaluate("document.querySelector('.profile-drop-surface').click()");
     const filedNow = await evaluate(`document.querySelector('[data-chunk="${chunkId}"]')?.classList.contains('filed') ?? true`);
     if (!filedNow) throw new Error(`Chunk did not file: ${chunkId}`);
+  }
+}
+
+// Revisit opened sources after later name chunks have created their dossiers.
+for (const sourceId of sourceOrder) {
+  await evaluate(`document.querySelector('[data-source="${sourceId}"]').click()`);
+  const chunkIds = await evaluate("[...document.querySelectorAll('[data-chunk]:not(.filed)')].map((element) => element.dataset.chunk)");
+  for (const chunkId of chunkIds) {
+    const data = await evaluate(`SECRET_FURRY_CASE.clues[${JSON.stringify(chunkId)}]`);
+    if (data.kind !== "identity") {
+      const target = data.kind === "relationship" ? data.endpoints[0] : data.person;
+      await evaluate(`document.querySelector('[data-rail-person="${target}"]').click()`);
+    }
+    await evaluate(`document.querySelector('[data-chunk="${chunkId}"]').click()`);
+    await evaluate("document.querySelector('.profile-drop-surface').click()");
   }
 }
 

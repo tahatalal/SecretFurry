@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#090b18" />
-    <title>Secret Furry — The Velvet Jackal</title>
+    <title>Secret Furry — The Quiet Account</title>
     <link rel="stylesheet" href="styles/base.css" />
     <link rel="stylesheet" href="styles/profiles.css" />
     <link rel="stylesheet" href="styles/sources.css" />
@@ -20,7 +20,7 @@
           <span class="wordmark-sigil" aria-hidden="true">✦</span>
           <div><small>BELLWETHER // PRIVATE CONTEXT DESK</small><h1>SECRET <em>FURRY</em></h1></div>
         </div>
-        <div class="case-chip"><span>CASE 01</span><b>THE VELVET JACKAL</b></div>
+        <div class="case-chip"><span>CASE 01</span><b>THE QUIET ACCOUNT</b></div>
         <div class="signal-chip"><i></i><span id="signalLabel">SIGNAL QUIET</span></div>
         <div class="top-actions">
           <button id="soundButton" type="button" aria-label="Toggle sound" title="Toggle sound">♪</button>
@@ -74,9 +74,9 @@
         <span class="intro-sigil">✦</span>
         <small>BELLWETHER CONTEXT DESK</small>
         <h2 id="introTitle">SECRET <em>FURRY</em></h2>
-        <p class="case-subtitle">CASE 01 — THE VELVET JACKAL</p>
+        <p class="case-subtitle">CASE 01 — THE QUIET ACCOUNT</p>
         <div class="pixel-rule"></div>
-        <p>A black-and-gold jackal won Moonrise's midnight masquerade, lost their costume head, and vanished. A gossip feed will expose the performer by 02:00. Find Velvet Static—but remember that knowing an identity does not make it yours to publish.</p>
+        <p>An anonymous writer called Velvet Static has won a place at Moonrise's closing salon with a talk about animal selves. The venue needs one private identity check; the writer refuses to attach a public name. Follow six ordinary online lives, separate familiarity from identity, and find who is protecting the jackal.</p>
         <div class="intro-steps"><span>OPEN LEADS</span><span>CREATE PROFILES</span><span>READ CONTEXT</span></div>
         <button class="primary-action" id="startButton" type="button">ENTER THE CASE <b>→</b></button>
       </div>
@@ -88,8 +88,8 @@
         <small>STABLE IDENTITY PATTERN</small>
         <h2 id="deductionTitle">THE SIGNAL HAS A NAME</h2>
         <div id="deductionPillars" class="deduction-pillars"></div>
-        <p>The independent trails agree. Review the recovered image before deciding what to do with the identity.</p>
-        <button class="primary-action" id="revealButton" type="button">RECONSTRUCT IMAGE <b>→</b></button>
+        <p>The language, artwork, private conversation and proposal trail agree. Review the privately supplied verification image before deciding who should receive the identity.</p>
+        <button class="primary-action" id="revealButton" type="button">OPEN VERIFICATION IMAGE <b>→</b></button>
       </div>
     </section>
 
@@ -97,9 +97,9 @@
       <div class="reveal-card game-card">
         <div class="reveal-photo"><img src="assets/reveal/velvet-jackal-reveal.png" alt="Recovered pixel-art photograph of Nadia Serin wearing the black-and-gold Velvet Static jackal fursuit while holding its head" /><span class="scan-pass"></span></div>
         <div class="reveal-copy">
-          <small>RECOVERED IMAGE // BACK_2349</small>
+          <small>PRIVATE VERIFICATION // VS_CHECK_01</small>
           <h2 id="revealTitle">NADIA SERIN IS <em>VELVET STATIC</em></h2>
-          <p>The image confirms the jackal, the headless lounge and the performer. It does not give anyone consent to expose her.</p>
+          <p>The image confirms that Nadia is the adult speaker and the person behind Velvet Static. It confirms nothing about who deserves to know.</p>
           <button class="primary-action" id="confrontButton" type="button">CONTACT VELVET STATIC <b>→</b></button>
         </div>
       </div>
@@ -108,13 +108,13 @@
     <section class="modal-layer hidden" id="decisionModal" aria-labelledby="decisionTitle">
       <div class="decision-card game-card">
         <small>PRIVATE CHANNEL // VELVET STATIC</small>
-        <h2 id="decisionTitle">“You were supposed to find my head. You found me.”</h2>
+        <h2 id="decisionTitle">“You found the person. Please don't lose the boundary.”</h2>
         <div class="final-chat">
           <p><b>VELVET STATIC</b>The jackal is not a prank and not a scandal. She is how I enter a room without first becoming the museum's opinion of me.</p>
-          <p><b>NADIA</b>Return the head. Delete the lounge footage. What happens to my name should still be my decision.</p>
+          <p><b>NADIA</b>Verify me to the organiser. What happens after that should still be my decision.</p>
         </div>
         <div class="decision-actions">
-          <button data-ending="protect" type="button"><strong>RETURN IT PRIVATELY</strong><span>Protect Nadia and report the camera violation</span></button>
+          <button data-ending="protect" type="button"><strong>VERIFY ONLY</strong><span>Confirm eligibility and keep Nadia anonymous</span></button>
           <button data-ending="confront" type="button"><strong>GIVE NADIA CONTROL</strong><span>Let her choose whether to reveal Velvet</span></button>
           <button data-ending="reveal" type="button"><strong>FULL DISCLOSURE</strong><span>Name Nadia Serin as Velvet Static</span></button>
         </div>

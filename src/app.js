@@ -29,15 +29,15 @@
   const discovered = (personId) => filed(`${personId}_name`);
   const activeSource = () => CASE.sources.find((source) => source.id === state.activeSource);
   const SOURCE_ADDRESSES = {
-    moonrise_news: "gatehouse.bw/night/moonrise-velvet-static",
-    expo_directory: "moonrise.bw/tonight/featured-people",
-    afterdark_chat: "recovery.local/moonrise/after-dark-floor",
-    lumen_thread: "lumen.bw/thread/VS-884",
-    anime_forum: "moonboard.net/identity/99104",
-    ren_portfolio: "renmarch.studio/commissions/archive",
-    event_logs: "moonrise-sec.local/export/privacy-404",
-    backstage_archive: "incident.local/moonrise/404/backstage",
-    private_dm: "hush.local/recovery/get-my-head-back"
+    moonrise_site: "moonrisecommons.org/programme/closing-salon",
+    blue_thread: "bsky.app/profile/moonrise.events/post/3kvs8",
+    discord_lounge: "discord.com/channels/moonrise/creature-comforts",
+    wildselves_forum: "wildselves.net/t/character-more-honest/8841",
+    telegram_meetup: "t.me/bellwethercreatures/18422",
+    art_gallery: "morrowlight.art/gallery/private-archive",
+    imessage_thread: "device.local/messages/thread/2441",
+    proposal_portal: "programme.moonrisecommons.org/audit/MR-CC-221",
+    velvet_dm: "relay.local/messages/velvet-static"
   };
 
   function restore() {
@@ -342,7 +342,7 @@
 
   function showDeduction() {
     const labels = {
-      nadia_phrase: ["LANGUAGE", "matched"], nadia_fandom_view: ["IDENTITY", "echoed"], nadia_lounge: ["ACCESS", "confirmed"], nadia_commission: ["CHARACTER", "traced"], nadia_device: ["DEVICE", "matched"], nadia_private: ["MOTIVE", "understood"], link_nadia_imogen: ["HANDLER", "connected"]
+      nadia_view: ["IDEA", "echoed"], nadia_phrase: ["PHRASE", "matched"], nadia_species: ["JACKAL", "specific"], nadia_sketch: ["DESIGN", "traced"], nadia_message: ["VOICE", "personal"], nadia_proposal: ["DRAFT", "matched"], nadia_private: ["MOTIVE", "understood"], link_nadia_ren: ["ART", "connected"]
     };
     $("#deductionPillars").innerHTML = CASE.finalKeys.map((id) => `<span>${labels[id][0]}<b>${labels[id][1]}</b></span>`).join("");
     $("#deductionModal").classList.remove("hidden");
