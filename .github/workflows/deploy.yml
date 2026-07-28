@@ -1,16 +1,16 @@
-# Publishes the built game to GitHub Pages.
+# Publishes the built game to GitHub Pages on every push to main, and on
+# demand from the Actions tab.
 #
-# Deliberately manual: this workflow only runs when you trigger it from the
-# Actions tab. To publish on every push to main instead, uncomment the `push`
-# trigger below and enable Pages for the repository (Settings -> Pages ->
-# Source: GitHub Actions).
+# `npm run check` runs first, so a push that breaks the case file — an
+# unreachable page, an uncompletable chapter — fails the deploy instead of
+# shipping a game that can't be finished.
 
 name: Deploy
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
-  # push:
-  #   branches: [main]
 
 permissions:
   contents: read
