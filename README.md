@@ -1,31 +1,104 @@
 # Secret Furry
 
-`Secret Furry` is an original desktop-first pixel-art investigation game. The player follows Inbox leads into believable fictional websites, pulls contextual data from them, builds one person at a time, and uses a detective-board overview to identify the performer behind Velvet Static.
+A pixel-art deduction game about finding someone who doesn't want to be found.
 
-Each lead opens a distinct in-world source: a long-form newspaper report, public staff directory, social thread, workplace channel, personal blog, craft forum, raw access-control export, photographer's archive, or encrypted group conversation. Datachunks remain phrases inside the source's natural typography, with ordinary context and non-clue material around them.
+You met them once, at a convention, in the headless lounge. Four hours about
+everything. You traded fursona names and meant to trade handles and didn't.
+Their name is Vale, they're a maned wolf, and their accounts have been going
+quiet one at a time ever since.
+
+You're going to find them anyway. The game is about *how*.
+
+---
 
 ## Play
 
-Open `index.html` directly in a modern desktop browser. No build step, server, account, or dependency installation is required.
-
-## Controls
-
-- Click an Inbox lead to replace the Inbox with its linked source.
-- Use the fixed **Inbox** tab to return to available leads; opened sources remain beside it as switchable tabs.
-- Drag a highlighted data chunk anywhere onto the active dossier; the game files it automatically.
-- Names create new profiles. Image chunks reveal portraits.
-- Use the portrait rail to switch people.
-- Use **Network** to inspect discovered relationships, then click a portrait to return to its dossier.
-- Clicking a chunk and then the dossier is an accessibility fallback for dragging.
-
-## Validation
-
-```powershell
-node --check src/app.js
-node --check src/case-data.js
-node scripts/validate-case.js
+```bash
+npm install
 ```
 
-An optional Chrome DevTools smoke test is included at `scripts/qa-browser.mjs`; it expects a local headless Chrome endpoint on port 9223.
+```bash
+npm run dev
+```
 
-All characters, messages, accounts, images, and personal data are fictional. The generated art assets are original project assets.
+Desktop-first — it wants at least 1280px of width. Mobile is not supported yet.
+
+## How it plays
+
+Search the internet. Read what comes back. Anything highlighted is a fact you
+can keep: click it, then click the person it belongs to — or drag it onto them.
+
+- **Profiles** fill in slot by slot. One fact per slot, so when two sources
+  disagree, filing one throws the other out. Some of what you find is false,
+  and you won't always know which.
+- **The web** is the other half of the board. Facts that tie two people
+  together don't go in a slot; they draw an edge. June Ferraro sells foam to
+  everybody in this town, which makes her the seam between the half of the
+  internet where Vale is a maned wolf and the half where somebody has a
+  payroll number.
+- **Filing unlocks searching.** Every fact you keep gives you something new to
+  look for. Reading a page does too.
+
+At the end you write them one message. The game knows every fact you filed and
+where it came from — things they posted openly, things that crossed between
+their two lives, and things they deleted. That's what the ending is graded on,
+far more than whether you were right.
+
+## Structure
+
+```
+src/
+  art/         sprite engine, palettes, fursona compositor. No image files —
+               every sprite is text plus a palette, rasterized at runtime.
+  engine/      state, save, search, unlock gating, audio, ending logic.
+  platforms/   one module per real site: a typed page shape and its layout.
+  content/     the case — people, clues, sources, three chapters, endings.
+  ui/          controller and views.
+scripts/       case validator and dev screenshot helpers.
+tests/         engine unit tests.
+e2e/           full playthroughs.
+```
+
+Content is authored as structured data, not HTML. A Reddit page is
+`redditThread({ sub, title, op, comments })`, and `platforms/reddit.ts` owns
+every pixel of Reddit's chrome. Clues are `{{c:clue_id|visible text}}` tokens
+inside that data.
+
+## Checks
+
+```bash
+npm run check
+```
+
+Typecheck, then the case validator, then unit tests. The validator is the one
+that matters: it proves every clue is pickable, every source is reachable by
+some search term you can actually unlock, every chapter is completable, every
+false clue has a way to be caught, and no page is thin enough to read as a
+stub.
+
+```bash
+npm run e2e
+```
+
+Plays the game start to finish by clicking, which is the only way to prove the
+whole graph is solvable in practice.
+
+## Deploying
+
+`npm run build` emits a static `dist/`. A GitHub Actions workflow that
+publishes it to Pages is in `.github/workflows/deploy.yml`, disabled by
+default — enable Pages for the repo and set the workflow to run on push when
+you want it live.
+
+## About the content
+
+Every person, account, post, message, review and article in this game is
+fictional. Real platforms and real conventions are depicted so the game feels
+like the internet you actually use; none of them are affiliated with it,
+endorse it, or appear here in any official capacity. No brand assets are
+used — every logo is a pixel-art re-drawing made for this game, as is
+everything else you can see.
+
+Rockford, Illinois is a real city. Kishwaukee Middle School, Ferraro Fabric &
+Foam, Riverside Church, North Main Animal Hospital, the Rockford Register
+Star's coverage, and every person named in this game are not real.

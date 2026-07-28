@@ -1,0 +1,1546 @@
+/* Platform skins, part two: chat apps, wikis, creator platforms, and the
+   civilian half of the internet. Same rule as platforms.css — real layout and
+   chrome color, the game's pixel typeface. */
+
+/* --- chat (shared by Telegram / Discord / DMs) ---------------------------- */
+
+.ch-date {
+  margin: 14px 0 8px;
+  text-align: center;
+  font-size: 12px;
+  color: #8a97a5;
+}
+
+.ch-line {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  padding: 5px 14px;
+}
+
+.ch-pfp {
+  border-radius: 50%;
+}
+
+.ch-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.ch-meta span {
+  font-size: 11px;
+  opacity: 0.65;
+}
+
+.ch-text {
+  font-size: 14px;
+  line-height: 1.5;
+  max-width: 66ch;
+}
+
+.ch-note {
+  margin-top: 4px;
+  font-size: 12px;
+  font-style: italic;
+  opacity: 0.75;
+}
+
+.ch-system {
+  padding: 5px 14px;
+  text-align: center;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.ch-line .pf-imgbox {
+  margin-top: 6px;
+  max-width: 460px;
+}
+
+/* Telegram */
+
+.tg {
+  background: #eef3f8;
+  min-height: 100%;
+  color: #14202b;
+}
+
+.tg-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: #29a9eb;
+  color: #fff;
+}
+
+.tg-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.25);
+  font-weight: 700;
+}
+
+.tg-members {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.tg-pinned {
+  padding: 8px 14px;
+  background: #dff0fb;
+  border-bottom: 1px solid #c3e0f2;
+  font-size: 13px;
+}
+
+.tg-scroll {
+  padding: 8px 0 16px;
+}
+
+.tg .ch-bubble {
+  background: #fff;
+  padding: 7px 11px;
+  border-radius: 10px;
+  box-shadow: 0 1px 1px rgb(20 32 43 / 0.12);
+  justify-self: start;
+}
+
+.tg-compose {
+  padding: 12px 16px;
+  background: #fff;
+  border-top: 1px solid #d4e0ea;
+  color: #8a97a5;
+  font-size: 13px;
+}
+
+/* Discord */
+
+.dc {
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  min-height: 100%;
+  background: #313338;
+  color: #dbdee1;
+}
+
+.dc-side {
+  background: #2b2d31;
+  padding: 0 0 12px;
+}
+
+.dc-server {
+  padding: 14px 14px;
+  font-weight: 700;
+  color: #f2f3f5;
+  border-bottom: 1px solid #1f2124;
+}
+
+.dc-chanlist {
+  padding: 8px;
+}
+
+.dc-chan {
+  padding: 5px 9px;
+  border-radius: 4px;
+  color: #949ba4;
+  font-size: 14px;
+}
+
+.dc-chan.is-on {
+  background: #404249;
+  color: #f2f3f5;
+}
+
+.dc-head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #26282c;
+}
+
+.dc-topic {
+  font-size: 12px;
+  color: #949ba4;
+}
+
+.dc-scroll {
+  padding: 10px 0 20px;
+}
+
+.dc .ch-meta b {
+  color: #f2f3f5;
+}
+
+.dc .pf-imgbox {
+  background-color: #2b2d31;
+  border-color: #1f2124;
+  color: #b5bac1;
+}
+
+/* DMs */
+
+.dm {
+  background: #faf6ff;
+  min-height: 100%;
+  color: #2b2438;
+}
+
+.dm-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #a86bf0;
+  color: #fff;
+}
+
+.dm-sub {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.dm-scroll {
+  padding: 10px 0 20px;
+}
+
+.dm .ch-bubble {
+  background: #fff;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid #e6dbf6;
+  justify-self: start;
+}
+
+.dm .ch-line--mine .ch-bubble {
+  background: #ede2ff;
+}
+
+/* --- Wikipedia ------------------------------------------------------------ */
+
+.wp {
+  background: #fff;
+  color: #202122;
+  min-height: 100%;
+  font-size: 15px;
+}
+
+.wp-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid #a2a9b1;
+}
+
+.wp-globe {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #f8f9fa;
+  border: 1px solid #a2a9b1;
+  font-weight: 700;
+}
+
+.wp-sub {
+  font-size: 11px;
+  color: #54595d;
+}
+
+.wp-body {
+  padding: 20px 26px 40px;
+}
+
+.wp-title {
+  font-family: Georgia, serif;
+  font-size: 28px;
+  font-weight: 400;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #a2a9b1;
+}
+
+.wp-fromwp {
+  font-size: 12px;
+  color: #54595d;
+  margin: 6px 0 16px;
+}
+
+.wp-infobox {
+  float: right;
+  width: 270px;
+  margin: 0 0 16px 20px;
+  padding: 10px;
+  background: #f8f9fa;
+  border: 1px solid #a2a9b1;
+  font-size: 13px;
+}
+
+.wp-infotitle {
+  text-align: center;
+  font-weight: 700;
+  padding-bottom: 8px;
+}
+
+.wp-infobox table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.wp-infobox th,
+.wp-infobox td {
+  padding: 4px 5px;
+  text-align: left;
+  vertical-align: top;
+  border-top: 1px solid #eaecf0;
+}
+
+.wp-infobox th {
+  width: 38%;
+  color: #54595d;
+}
+
+.wp-lede,
+.wp-section div {
+  line-height: 1.72;
+  max-width: 74ch;
+}
+
+.wp-section h2 {
+  margin: 22px 0 8px;
+  font-family: Georgia, serif;
+  font-size: 21px;
+  font-weight: 400;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #a2a9b1;
+}
+
+.wp-edit {
+  float: right;
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: #3366cc;
+}
+
+.wp-section ul {
+  max-width: 74ch;
+  line-height: 1.7;
+}
+
+/* --- Fandom --------------------------------------------------------------- */
+
+.fd {
+  background: #fff;
+  color: #3a3a3a;
+  min-height: 100%;
+  font-size: 15px;
+}
+
+.fd-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 18px;
+  background: #fa005a;
+  color: #fff;
+}
+
+.fd-mark {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  background: #fff;
+  color: #fa005a;
+  font-weight: 700;
+  border-radius: 6px;
+}
+
+.fd-nav {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.fd-banner {
+  padding: 22px;
+  background: #f1f1f1;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: #9a9a9a;
+}
+
+.fd-body {
+  padding: 20px 26px 40px;
+}
+
+.fd-title {
+  font-size: 30px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #fa005a;
+}
+
+.fd-infobox {
+  float: right;
+  width: 260px;
+  margin: 14px 0 16px 20px;
+  border: 1px solid #ddd;
+  font-size: 13px;
+}
+
+.fd-infotitle {
+  padding: 8px;
+  background: #fa005a;
+  color: #fff;
+  text-align: center;
+  font-weight: 700;
+}
+
+.fd-inforow {
+  display: grid;
+  grid-template-columns: 40% 1fr;
+  gap: 6px;
+  padding: 6px 8px;
+  border-top: 1px solid #eee;
+}
+
+.fd-inforow span:first-child {
+  color: #777;
+}
+
+.fd-lede,
+.fd-section div {
+  line-height: 1.72;
+  max-width: 74ch;
+}
+
+.fd-section h2 {
+  margin: 22px 0 8px;
+  font-size: 21px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #ddd;
+}
+
+.fd-section ul {
+  max-width: 74ch;
+  line-height: 1.75;
+}
+
+/* --- Wayback -------------------------------------------------------------- */
+
+.wb {
+  background: #fff;
+  min-height: 100%;
+}
+
+.wb-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 16px;
+  background: #2b2438;
+  color: #fff8ec;
+  font-size: 13px;
+}
+
+.wb-mark {
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.wb-way {
+  color: #ffd43f;
+}
+
+.wb-url {
+  margin-left: auto;
+  opacity: 0.75;
+  font-size: 12px;
+}
+
+.wb-strip {
+  padding: 8px 16px;
+  background: #f2eee8;
+  border-bottom: 2px solid #2b2438;
+  font-size: 13px;
+}
+
+.wb-warn {
+  margin-left: 14px;
+  padding: 1px 8px;
+  background: #ff4d6d;
+  color: #fff;
+  font-size: 12px;
+}
+
+.wb-frame {
+  border-top: 1px solid #ddd;
+}
+
+/* --- Toyhouse ------------------------------------------------------------- */
+
+.th {
+  background: #f4f7ff;
+  min-height: 100%;
+  color: #23293a;
+}
+
+.th-top {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: #4d7cfe;
+  color: #fff;
+  font-size: 13px;
+}
+
+.th-body {
+  display: grid;
+  grid-template-columns: 1fr 250px;
+  gap: 18px;
+  padding: 18px;
+}
+
+.th-main h1 {
+  font-size: 26px;
+  margin-bottom: 12px;
+}
+
+.th-profile {
+  margin-top: 14px;
+  line-height: 1.7;
+  max-width: 68ch;
+}
+
+.th-side {
+  padding: 14px;
+  background: #fff;
+  border: 1px solid #d8e0f5;
+}
+
+.th-pfp {
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.th-facts {
+  margin: 0 0 12px;
+  font-size: 13px;
+}
+
+.th-facts div {
+  display: grid;
+  grid-template-columns: 74px 1fr;
+  gap: 6px;
+  padding: 4px 0;
+  border-top: 1px solid #eef2fb;
+}
+
+.th-facts dt {
+  color: #7b86a3;
+}
+
+.th-facts dd {
+  margin: 0;
+}
+
+.th-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.th-tags span {
+  padding: 1px 7px;
+  background: #eaf0ff;
+  border: 1px solid #cfdcfb;
+  font-size: 12px;
+}
+
+.th-log {
+  margin-top: 14px;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.th-logtitle {
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+/* --- Ko-fi ---------------------------------------------------------------- */
+
+.kf {
+  background: #fff;
+  min-height: 100%;
+  color: #2a2a2a;
+}
+
+.kf-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-bottom: 1px solid #eee;
+  color: #ff5e5b;
+  font-size: 17px;
+}
+
+.kf-hero {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 18px;
+  background: #fff4f4;
+}
+
+.kf-pfp {
+  border-radius: 50%;
+}
+
+.kf-handle {
+  font-size: 13px;
+  color: #8a8a8a;
+}
+
+.kf-btn {
+  margin-left: auto;
+  padding: 10px 22px;
+  background: #ff5e5b;
+  color: #fff;
+  border: 0;
+  border-radius: 22px;
+  font-weight: 700;
+  opacity: 0.65;
+}
+
+.kf-about {
+  padding: 18px;
+  line-height: 1.7;
+  max-width: 70ch;
+}
+
+.kf-goal {
+  padding: 0 18px 16px;
+}
+
+.kf-bar {
+  height: 14px;
+  background: #f1f1f1;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.kf-bar span {
+  display: block;
+  height: 100%;
+  background: #ff5e5b;
+}
+
+.kf-goallabel {
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.kf-posts {
+  padding: 0 18px 24px;
+}
+
+.kf-post {
+  padding: 14px 0;
+  border-top: 1px solid #eee;
+  line-height: 1.65;
+}
+
+.kf-post h2 {
+  font-size: 17px;
+}
+
+.kf-when {
+  font-size: 12px;
+  color: #8a8a8a;
+  margin: 3px 0 8px;
+}
+
+.kf-lock {
+  color: #ff5e5b;
+  font-weight: 700;
+}
+
+/* --- Etsy ----------------------------------------------------------------- */
+
+.et {
+  background: #fff;
+  min-height: 100%;
+  color: #222;
+}
+
+.et-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 18px;
+  border-bottom: 1px solid #eee;
+}
+
+.et-top b {
+  color: #f1641e;
+  font-size: 20px;
+}
+
+.et-search {
+  flex: 1;
+  max-width: 460px;
+  padding: 7px 14px;
+  border: 2px solid #222;
+  border-radius: 22px;
+  color: #888;
+  font-size: 13px;
+}
+
+.et-shop {
+  padding: 20px 18px 10px;
+}
+
+.et-shop h1 {
+  font-size: 26px;
+}
+
+.et-tag {
+  color: #595959;
+  margin-top: 3px;
+}
+
+.et-meta {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #757575;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.et-announce {
+  margin: 8px 18px 16px;
+  padding: 12px 14px;
+  background: #fdf3ec;
+  border: 1px solid #f5d9c5;
+  line-height: 1.6;
+}
+
+.et-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 14px;
+  padding: 0 18px 20px;
+}
+
+.et-item {
+  margin: 0;
+}
+
+.et-item figcaption {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.et-reviews {
+  padding: 0 18px 26px;
+}
+
+.et-reviews h2 {
+  font-size: 17px;
+  margin-bottom: 10px;
+}
+
+.et-review {
+  padding: 12px 0;
+  border-top: 1px solid #eee;
+  line-height: 1.6;
+}
+
+.et-stars {
+  color: #f1641e;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.et-stars b {
+  color: #222;
+  margin-left: 8px;
+}
+
+.et-stars span {
+  color: #757575;
+  margin-left: 6px;
+}
+
+/* --- VRChat --------------------------------------------------------------- */
+
+.vr {
+  background: #0f1b21;
+  color: #d9edf3;
+  min-height: 100%;
+}
+
+.vr-top {
+  display: flex;
+  gap: 18px;
+  align-items: baseline;
+  padding: 12px 18px;
+  background: #2fc6dd;
+  color: #04222b;
+  font-size: 13px;
+}
+
+.vr-card {
+  display: flex;
+  gap: 18px;
+  padding: 20px 18px;
+}
+
+.vr-pfp {
+  border-radius: 10px;
+  border: 2px solid #2fc6dd;
+}
+
+.vr-card h1 {
+  font-size: 23px;
+}
+
+.vr-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: #9fc6d3;
+  margin: 5px 0 10px;
+}
+
+.vr-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #3fca7a;
+}
+
+.vr-bio {
+  line-height: 1.65;
+  max-width: 62ch;
+}
+
+.vr-worlds {
+  padding: 0 18px 20px;
+}
+
+.vr-worlds h2 {
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6fa5b5;
+  margin-bottom: 8px;
+}
+
+.vr-world {
+  display: flex;
+  justify-content: space-between;
+  padding: 9px 12px;
+  background: #16272f;
+  border: 1px solid #234049;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.vr-world span {
+  color: #6fa5b5;
+  font-size: 12px;
+}
+
+.vr-note {
+  margin: 0 18px 20px;
+  padding: 12px 14px;
+  background: #16272f;
+  border-left: 3px solid #2fc6dd;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* --- LinkedIn ------------------------------------------------------------- */
+
+.li {
+  background: #f3f2ef;
+  min-height: 100%;
+  color: #1b1f23;
+}
+
+.li-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 16px;
+  background: #fff;
+  border-bottom: 1px solid #e0dfdc;
+}
+
+.li-mark {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  background: #0a66c2;
+  color: #fff;
+  border-radius: 5px;
+  font-weight: 700;
+}
+
+.li-search {
+  padding: 6px 14px;
+  background: #edf3f8;
+  border-radius: 4px;
+  color: #6b7681;
+  font-size: 13px;
+  min-width: 280px;
+}
+
+.li-card {
+  margin: 12px;
+  background: #fff;
+  border: 1px solid #e0dfdc;
+  border-radius: 8px;
+  padding: 18px 20px;
+}
+
+.li-hero {
+  padding: 0 0 18px;
+  overflow: hidden;
+}
+
+.li-cover {
+  height: 84px;
+  background: linear-gradient(120deg, #0a66c2, #70b5f9);
+}
+
+.li-heroin {
+  display: flex;
+  gap: 16px;
+  padding: 0 20px;
+  margin-top: -34px;
+  align-items: flex-end;
+}
+
+.li-heroin .pf-initial {
+  border: 4px solid #fff;
+}
+
+.li-heroin h1 {
+  font-size: 23px;
+}
+
+.li-headline {
+  font-size: 15px;
+  margin-top: 2px;
+}
+
+.li-loc {
+  font-size: 13px;
+  color: #6b7681;
+  margin-top: 4px;
+}
+
+.li-card h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.li-about {
+  line-height: 1.7;
+  max-width: 72ch;
+}
+
+.li-role {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid #eee;
+}
+
+.li-role:first-of-type {
+  border-top: 0;
+}
+
+.li-rolemark {
+  width: 40px;
+  height: 40px;
+  background: #edf3f8;
+  border: 1px solid #dce6f1;
+  border-radius: 4px;
+}
+
+.li-org {
+  font-size: 14px;
+}
+
+.li-span {
+  font-size: 13px;
+  color: #6b7681;
+  margin-top: 2px;
+}
+
+.li-rolebody {
+  margin-top: 7px;
+  line-height: 1.6;
+  max-width: 70ch;
+}
+
+.li-act {
+  padding: 10px 0;
+  border-top: 1px solid #eee;
+  line-height: 1.6;
+}
+
+/* --- Instagram ------------------------------------------------------------ */
+
+.ig {
+  background: #fff;
+  min-height: 100%;
+  color: #262626;
+}
+
+.ig-top {
+  padding: 12px 18px;
+  border-bottom: 1px solid #dbdbdb;
+  font-size: 19px;
+}
+
+.ig-head {
+  display: flex;
+  gap: 30px;
+  padding: 24px 18px;
+  align-items: flex-start;
+}
+
+.ig-handle {
+  font-size: 20px;
+}
+
+.ig-stats {
+  display: flex;
+  gap: 26px;
+  margin: 14px 0;
+  font-size: 14px;
+}
+
+.ig-name {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.ig-bio {
+  font-size: 14px;
+  line-height: 1.55;
+  max-width: 48ch;
+}
+
+.ig-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 0 4px 20px;
+}
+
+.ig-cell {
+  margin: 0;
+}
+
+.ig-cell figcaption {
+  padding: 6px 4px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #555;
+}
+
+/* --- Facebook ------------------------------------------------------------- */
+
+.fb {
+  background: #f0f2f5;
+  min-height: 100%;
+  color: #050505;
+}
+
+.fb-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background: #fff;
+  border-bottom: 1px solid #dcdfe3;
+}
+
+.fb-mark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #1877f2;
+  color: #fff;
+  font-weight: 700;
+  font-size: 19px;
+}
+
+.fb-search {
+  padding: 7px 14px;
+  background: #f0f2f5;
+  border-radius: 20px;
+  color: #65676b;
+  font-size: 13px;
+}
+
+.fb-group {
+  padding: 12px 16px;
+  background: #fff;
+  border-bottom: 1px solid #dcdfe3;
+  font-weight: 700;
+}
+
+.fb-post {
+  margin: 12px;
+  padding: 14px 16px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #dcdfe3;
+}
+
+.fb-by {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fb-when {
+  font-size: 12px;
+  color: #65676b;
+}
+
+.fb-body {
+  margin: 12px 0;
+  line-height: 1.6;
+  max-width: 70ch;
+}
+
+.fb-stats {
+  padding: 10px 0;
+  margin-top: 10px;
+  border-top: 1px solid #ced0d4;
+  border-bottom: 1px solid #ced0d4;
+  font-size: 13px;
+  color: #65676b;
+}
+
+.fb-comments {
+  padding-top: 12px;
+}
+
+.fb-comment {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.fb-cbubble {
+  padding: 8px 12px;
+  background: #f0f2f5;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* --- YouTube -------------------------------------------------------------- */
+
+.yt {
+  background: #fff;
+  min-height: 100%;
+  color: #0f0f0f;
+}
+
+.yt-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.yt-mark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 24px;
+  background: #ff0000;
+  color: #fff;
+  border-radius: 5px;
+  font-size: 12px;
+}
+
+.yt-search {
+  flex: 1;
+  max-width: 480px;
+  padding: 6px 14px;
+  border: 1px solid #ccc;
+  border-radius: 18px;
+  color: #909090;
+  font-size: 13px;
+}
+
+.yt-player {
+  padding: 16px 18px 0;
+}
+
+.yt-player .pf-imgbox {
+  min-height: 200px;
+  background-color: #111;
+  border-color: #000;
+  color: #ddd;
+}
+
+.yt-title {
+  padding: 14px 18px 4px;
+  font-size: 20px;
+}
+
+.yt-meta {
+  padding: 0 18px;
+  font-size: 13px;
+  color: #606060;
+}
+
+.yt-channel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.yt-subs {
+  font-size: 12px;
+  color: #606060;
+}
+
+.yt-sub {
+  margin-left: auto;
+  padding: 9px 16px;
+  background: #0f0f0f;
+  color: #fff;
+  border: 0;
+  border-radius: 18px;
+  opacity: 0.6;
+}
+
+.yt-desc {
+  margin: 14px 18px;
+  padding: 12px 14px;
+  background: #f2f2f2;
+  border-radius: 10px;
+  line-height: 1.6;
+  max-width: 72ch;
+}
+
+.yt-comments {
+  padding: 0 18px 24px;
+}
+
+.yt-comments h2 {
+  font-size: 16px;
+  margin-bottom: 14px;
+}
+
+.yt-comment {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+  line-height: 1.55;
+}
+
+.yt-cmeta {
+  font-size: 13px;
+}
+
+.yt-cmeta span {
+  color: #606060;
+  font-size: 12px;
+}
+
+.yt-clikes {
+  font-size: 12px;
+  color: #606060;
+  margin-top: 4px;
+}
+
+/* --- Google Maps ---------------------------------------------------------- */
+
+.mp {
+  background: #fff;
+  min-height: 100%;
+  color: #202124;
+}
+
+.mp-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 18px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.mp-pin {
+  width: 16px;
+  height: 20px;
+  background: #ea4335;
+  clip-path: polygon(50% 100%, 0 42%, 12% 12%, 50% 0, 88% 12%, 100% 42%);
+}
+
+.mp-place {
+  padding: 18px;
+}
+
+.mp-place h1 {
+  font-size: 23px;
+}
+
+.mp-cat {
+  color: #70757a;
+  font-size: 14px;
+  margin-top: 2px;
+}
+
+.mp-rating {
+  margin: 8px 0;
+  color: #fbbc04;
+  font-size: 14px;
+}
+
+.mp-rating b {
+  color: #202124;
+  margin-right: 5px;
+}
+
+.mp-rating span {
+  color: #70757a;
+}
+
+.mp-addr {
+  font-size: 14px;
+  color: #3c4043;
+}
+
+.mp-canvas {
+  height: 110px;
+  margin: 0 18px;
+  display: grid;
+  place-items: center;
+  background:
+    repeating-linear-gradient(0deg, #e8eaed 0 1px, transparent 1px 28px),
+    repeating-linear-gradient(90deg, #e8eaed 0 1px, transparent 1px 28px),
+    #f1f3f4;
+  border: 1px solid #dadce0;
+  color: #9aa0a6;
+  font-size: 12px;
+}
+
+.mp-reviews {
+  padding: 18px;
+}
+
+.mp-review {
+  padding: 14px 0;
+  border-top: 1px solid #e8eaed;
+}
+
+.mp-rby {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mp-local {
+  font-size: 12px;
+  color: #70757a;
+}
+
+.mp-rstars {
+  margin: 6px 0;
+  color: #fbbc04;
+  font-size: 13px;
+}
+
+.mp-rstars span {
+  color: #70757a;
+  margin-left: 6px;
+}
+
+.mp-rtext {
+  line-height: 1.6;
+  max-width: 70ch;
+}
+
+/* --- local news ----------------------------------------------------------- */
+
+.nw {
+  background: #fffdf8;
+  min-height: 100%;
+  color: #1c1a20;
+}
+
+.nw-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  background: #2b2438;
+  color: #fff8ec;
+}
+
+.nw-top b {
+  font-size: 21px;
+  letter-spacing: 0.04em;
+}
+
+.nw-top nav {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.nw-article {
+  padding: 22px 24px 40px;
+  max-width: 780px;
+}
+
+.nw-section {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #b4472e;
+}
+
+.nw-article h1 {
+  margin: 6px 0 10px;
+  font-family: Georgia, serif;
+  font-size: 31px;
+  line-height: 1.2;
+}
+
+.nw-stand {
+  font-size: 17px;
+  line-height: 1.6;
+  color: #4a4453;
+}
+
+.nw-byline {
+  margin: 12px 0 18px;
+  padding: 8px 0;
+  border-top: 1px solid #ddd6c9;
+  border-bottom: 1px solid #ddd6c9;
+  font-size: 13px;
+  color: #6a6376;
+}
+
+.nw-photo figcaption {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #6a6376;
+}
+
+.nw-body {
+  margin-top: 18px;
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+/* --- personal blog -------------------------------------------------------- */
+
+.bl {
+  background: #fbfff9;
+  min-height: 100%;
+  color: #1f2a22;
+}
+
+.bl-top {
+  padding: 22px 24px;
+  background: #3fca7a;
+  color: #06301a;
+}
+
+.bl-top b {
+  font-size: 23px;
+}
+
+.bl-tagline {
+  font-size: 13px;
+  opacity: 0.8;
+  margin-top: 3px;
+}
+
+.bl-post {
+  padding: 24px;
+  max-width: 720px;
+}
+
+.bl-post h1 {
+  font-size: 27px;
+  line-height: 1.25;
+}
+
+.bl-when {
+  margin: 6px 0 16px;
+  font-size: 13px;
+  color: #63705f;
+}
+
+.bl-body {
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.bl-tags {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+  font-size: 13px;
+  color: #4a8a63;
+}
+
+.bl-comments {
+  padding: 0 24px 30px;
+  max-width: 720px;
+}
+
+.bl-comments h2 {
+  font-size: 16px;
+  padding-top: 18px;
+  border-top: 1px solid #d7e6da;
+}
+
+.bl-comment {
+  padding: 12px 0;
+  line-height: 1.65;
+}
+
+.bl-comment span {
+  font-size: 12px;
+  color: #63705f;
+  margin-left: 8px;
+}

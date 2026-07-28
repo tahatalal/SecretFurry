@@ -1,0 +1,328 @@
+/* ---------------------------------------------------------------------------
+   Secret Furry — pixel UI kit
+   Square corners, 3px ink outlines, hard (never blurred) drop shadows.
+   Anything that needs to look like a real website lives in platforms/*.css and
+   deliberately does NOT use these classes.
+--------------------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(var(--bg-dots) 1px, transparent 1px),
+    radial-gradient(var(--bg-dots) 1px, transparent 1px);
+  background-size: 16px 16px, 16px 16px;
+  background-position: 0 0, 8px 8px;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--fs-md);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: none;
+  font-smooth: never;
+  text-rendering: optimizeSpeed;
+}
+
+img,
+canvas {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  line-height: var(--lh-tight);
+  font-weight: 700;
+}
+
+p {
+  margin: 0 0 var(--sp-3);
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+a {
+  color: var(--cobalt-d);
+  text-underline-offset: 2px;
+}
+
+:focus-visible {
+  outline: var(--border) solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* --- panels --------------------------------------------------------------- */
+
+.px-panel {
+  position: relative;
+  background: var(--surface);
+  border: var(--border) solid var(--ink);
+  box-shadow: var(--shadow-drop) var(--shadow-drop) 0 0 rgb(43 36 56 / 0.28);
+}
+
+.px-panel--flat {
+  box-shadow: none;
+}
+
+.px-panel--tight {
+  box-shadow: var(--px) var(--px) 0 0 rgb(43 36 56 / 0.28);
+}
+
+/* Notched corners for hero elements. Requires an inner .px-notch__in. */
+.px-notch {
+  --notch: 4px;
+  background: var(--ink);
+  padding: var(--border);
+  clip-path: polygon(
+    var(--notch) 0,
+    calc(100% - var(--notch)) 0,
+    100% var(--notch),
+    100% calc(100% - var(--notch)),
+    calc(100% - var(--notch)) 100%,
+    var(--notch) 100%,
+    0 calc(100% - var(--notch)),
+    0 var(--notch)
+  );
+}
+
+.px-notch__in {
+  --notch: 4px;
+  background: var(--surface);
+  clip-path: polygon(
+    var(--notch) 0,
+    calc(100% - var(--notch)) 0,
+    100% var(--notch),
+    100% calc(100% - var(--notch)),
+    calc(100% - var(--notch)) 100%,
+    var(--notch) 100%,
+    0 calc(100% - var(--notch)),
+    0 var(--notch)
+  );
+}
+
+/* --- headings ------------------------------------------------------------- */
+
+.px-display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+}
+
+.px-label {
+  font-family: var(--font-ui);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* --- buttons -------------------------------------------------------------- */
+
+.px-btn {
+  --btn-face: var(--paper-2);
+  --btn-edge: var(--paper-edge);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-4);
+  min-height: 40px;
+  background: var(--btn-face);
+  color: var(--ink);
+  border: var(--border) solid var(--ink);
+  border-radius: 0;
+  font-family: var(--font-ui);
+  font-size: var(--fs-sm);
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 0 var(--px) 0 0 var(--btn-edge), 0 var(--px) 0 var(--border) var(--ink);
+  transform: translateY(0);
+  transition: transform var(--t-fast) var(--ease-step);
+}
+
+.px-btn:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+.px-btn:active:not(:disabled) {
+  transform: translateY(var(--px));
+  box-shadow: 0 0 0 0 var(--btn-edge), 0 0 0 var(--border) var(--ink);
+}
+
+.px-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.px-btn--primary {
+  --btn-face: var(--tangerine);
+  --btn-edge: var(--tangerine-d);
+  color: var(--ink);
+}
+
+.px-btn--go {
+  --btn-face: var(--meadow);
+  --btn-edge: var(--meadow-d);
+}
+
+.px-btn--danger {
+  --btn-face: var(--berry);
+  --btn-edge: var(--berry-d);
+  color: var(--paper);
+}
+
+.px-btn--cool {
+  --btn-face: var(--lagoon);
+  --btn-edge: var(--lagoon-d);
+}
+
+.px-btn--ghost {
+  --btn-face: transparent;
+  --btn-edge: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.px-btn--ghost:hover:not(:disabled) {
+  background: rgb(43 36 56 / 0.08);
+}
+
+.px-btn--sm {
+  min-height: 28px;
+  padding: var(--sp-1) var(--sp-2);
+  font-size: var(--fs-xs);
+}
+
+.px-btn--icon {
+  padding: var(--sp-1);
+  min-width: 32px;
+  min-height: 32px;
+}
+
+/* --- tags ----------------------------------------------------------------- */
+
+.px-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: 1px var(--sp-2);
+  background: var(--paper-3);
+  border: 2px solid var(--ink);
+  font-family: var(--font-ui);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.px-tag--open {
+  background: var(--prov-open);
+}
+.px-tag--crossed {
+  background: var(--prov-crossed);
+}
+.px-tag--private {
+  background: var(--prov-private);
+  color: var(--paper);
+}
+
+/* --- inputs --------------------------------------------------------------- */
+
+.px-input,
+.px-textarea {
+  width: 100%;
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--paper);
+  border: var(--border) solid var(--ink);
+  border-radius: 0;
+  font-family: var(--font-body);
+  font-size: var(--fs-md);
+  box-shadow: inset 0 2px 0 0 rgb(43 36 56 / 0.12);
+}
+
+.px-textarea {
+  min-height: 96px;
+  resize: vertical;
+  line-height: var(--lh-body);
+}
+
+/* --- scrollbars ----------------------------------------------------------- */
+
+.px-scroll {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink-3) var(--paper-3);
+}
+
+.px-scroll::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+
+.px-scroll::-webkit-scrollbar-track {
+  background: var(--paper-3);
+  border-left: var(--border) solid var(--ink);
+}
+
+.px-scroll::-webkit-scrollbar-thumb {
+  background: var(--ink-3);
+  border: var(--border) solid var(--ink);
+}
+
+.px-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-2);
+}
+
+/* --- utility -------------------------------------------------------------- */
+
+.px-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.px-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.px-grow {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.px-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}

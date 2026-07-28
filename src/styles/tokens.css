@@ -1,0 +1,110 @@
+/* ---------------------------------------------------------------------------
+   Secret Furry — design tokens
+   Bright, saturated, chunky. Everything sits on a 4px grid.
+   Colors are one shared palette; art/palettes.ts mirrors these exact hexes so
+   sprites and UI never drift apart.
+--------------------------------------------------------------------------- */
+
+/* Latin subsets only. The full packages ship cyrillic, greek and vietnamese
+   faces for every weight, which Vite then base64-inlines into the stylesheet
+   — that alone was 200kB of CSS for glyphs this game never renders. */
+@import "@fontsource/pixelify-sans/latin-400.css";
+@import "@fontsource/pixelify-sans/latin-500.css";
+@import "@fontsource/pixelify-sans/latin-700.css";
+@import "@fontsource/silkscreen/latin-400.css";
+@import "@fontsource/silkscreen/latin-700.css";
+@import "@fontsource/press-start-2p/latin-400.css";
+
+:root {
+  /* --- core ink & paper ------------------------------------------------- */
+  --ink: #2b2438;
+  --ink-2: #4a3f5c;
+  --ink-3: #6f6483;
+  --ink-4: #9c93ae;
+
+  --paper: #fff8ec;
+  --paper-2: #ffefd8;
+  --paper-3: #ffe3c0;
+  --paper-edge: #e3cdb2;
+
+  /* --- the bright eight -------------------------------------------------- */
+  --berry: #ff4d6d;
+  --berry-d: #d62b4d;
+  --tangerine: #ff8a3d;
+  --tangerine-d: #e06a1c;
+  --sunbeam: #ffd43f;
+  --sunbeam-d: #e0ae15;
+  --meadow: #3fca7a;
+  --meadow-d: #21a459;
+  --lagoon: #2fc6dd;
+  --lagoon-d: #129cb2;
+  --cobalt: #4d7cfe;
+  --cobalt-d: #2b56d0;
+  --orchid: #a86bf0;
+  --orchid-d: #8244cc;
+  --bubblegum: #ff9ec4;
+  --bubblegum-d: #e06d9d;
+
+  /* --- semantic ---------------------------------------------------------- */
+  --bg: #f4e7ff;
+  --bg-dots: #e2cdf6;
+  --surface: var(--paper);
+  --surface-alt: var(--paper-2);
+  --accent: var(--tangerine);
+  --accent-2: var(--orchid);
+  --focus: var(--cobalt);
+
+  --chunk-bg: var(--sunbeam);
+  --chunk-bg-hot: #fff08a;
+  --chunk-filed: var(--meadow);
+  --chunk-false: var(--berry);
+
+  --prov-open: var(--meadow);
+  --prov-crossed: var(--tangerine);
+  --prov-private: var(--berry);
+
+  /* --- geometry ---------------------------------------------------------- */
+  --px: 4px;
+  --border: 3px;
+  --shadow-drop: 6px;
+  --radius: 0px;
+
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+  --sp-8: 64px;
+
+  /* --- type -------------------------------------------------------------- */
+  --font-body: "Pixelify Sans", "Trebuchet MS", system-ui, sans-serif;
+  --font-ui: "Silkscreen", "Pixelify Sans", monospace;
+  --font-display: "Press Start 2P", "Silkscreen", monospace;
+
+  --fs-xs: 11px;
+  --fs-sm: 13px;
+  --fs-md: 15px;
+  --fs-lg: 18px;
+  --fs-xl: 24px;
+  --fs-2xl: 32px;
+  --fs-3xl: 44px;
+
+  --lh-tight: 1.15;
+  --lh-body: 1.55;
+
+  /* --- motion ------------------------------------------------------------ */
+  --t-fast: 90ms;
+  --t-med: 180ms;
+  --t-slow: 320ms;
+  --ease-step: steps(4, end);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --t-fast: 0ms;
+    --t-med: 0ms;
+    --t-slow: 0ms;
+  }
+}

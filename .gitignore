@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.vite/
+shots/
+test-results/
+playwright-report/
+blob-report/
+.playwright/
+*.local
+.DS_Store
+Thumbs.db

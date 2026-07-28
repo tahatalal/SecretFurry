@@ -1,0 +1,529 @@
+/* ---------------------------------------------------------------------------
+   Platform marks, 16x16, drawn from scratch in the game's own chunky style.
+
+   These are pixel-art impressions of each site's identity, not copies of any
+   brand asset — no image file from any of these companies ships with the game.
+   Every page also carries the fiction notice in the browser chrome.
+
+     B brand background   W light glyph   D dark glyph   A accent
+--------------------------------------------------------------------------- */
+
+import { defineSprite, type PaletteMap, type Sprite } from "../pixel.ts";
+import type { PlatformId } from "../../engine/types.ts";
+
+function mark(art: string, palette: PaletteMap): Sprite {
+  return defineSprite(art, palette);
+}
+
+const BLUESKY = mark(
+  `
+..BBBBBBBBBBBB..
+.BBBBBBBBBBBBBB.
+BBWWBBBBBBBBWWBB
+BWWWWBBBBBBWWWWB
+BWWWWWBBBBWWWWWB
+BBWWWWWBBWWWWWBB
+BBBWWWWWWWWWWBBB
+BBBBWWWWWWWWBBBB
+BBBBBWWWWWWBBBBB
+BBBBBBWWWWBBBBBB
+BBBBBBBWWBBBBBBB
+BBBBBBBBBBBBBBBB
+BBBBBBBBBBBBBBBB
+BBBBBBBBBBBBBBBB
+.BBBBBBBBBBBBBB.
+..BBBBBBBBBBBB..
+`,
+  { B: "#0085ff", W: "#ffffff" },
+);
+
+const REDDIT = mark(
+  `
+..BBBBBBBBBBBB..
+.BBBBBBBWBBBBBB.
+BBBBBBBBWBBBBBBB
+BBBBBBWWWBBBBBBB
+BBBBWWWWWWWWWBBB
+BBBWWWWWWWWWWWBB
+BBWWWWWWWWWWWWWB
+BBWDDWWWWWWDDWWB
+BBWDDWWWWWWDDWWB
+BBWWWWWWWWWWWWWB
+BBWWDWWWWWWDWWWB
+BBBWWDDDDDDWWWBB
+BBBBWWWWWWWWWBBB
+BBBBBBBBBBBBBBBB
+.BBBBBBBBBBBBBB.
+..BBBBBBBBBBBB..
+`,
+  { B: "#ff4500", W: "#ffffff", D: "#ff4500" },
+);
+
+const DISCORD = mark(
+  `
+..BBBBBBBBBBBB..
+.BBBBBBBBBBBBBB.
+BBBBBBBBBBBBBBBB
+BBBBWWWWWWWWBBBB
+BBBWWWWWWWWWWBBB
+BBWWWWWWWWWWWWBB
+BBWWDWWWWWWDWWBB
+BBWWDWWWWWWDWWBB
+BBWWWWWWWWWWWWBB
+BBWWWWWWWWWWWWBB
+BBWWWBWWWWBWWWBB
+BBWWBBBWWBBBWWBB
+BBBWBBBBBBBBWBBB
+BBBBBBBBBBBBBBBB
+.BBBBBBBBBBBBBB.
+..BBBBBBBBBBBB..
+`,
+  { B: "#5865f2", W: "#ffffff", D: "#5865f2" },
+);
+
+const FURAFFINITY = mark(
+  `
+..BBBBBBBBBBBB..
+.BBBBBBBBBBBBBB.
+BBBWWBBBBBBWWBBB
+BBWWWWBBBBWWWWBB
+BBWWWWBBBBWWWWBB
+BBBWWBBBBBBWWBBB
+BBBBBBWWWWBBBBBB
+BBBBBWWWWWWBBBBB
+BBBWWWWWWWWWWBBB
+BBWWWWWWWWWWWWBB
+BBWWWWWWWWWWWWBB
+BBBWWWWWWWWWWBBB
+BBBBWWWWWWWWBBBB
+BBBBBBBBBBBBBBBB
+.BBBBBBBBBBBBBB.
+..BBBBBBBBBBBB..
+`,
+  { B: "#2e3b41", W: "#ff9f4a" },
+);
+
+const TELEGRAM = mark(
+  `
+..BBBBBBBBBBBB..
+.BBBBBBBBBBBBBB.
+BBBBBBBBBBBBWWBB
+BBBBBBBBBBWWWWBB
+BBBBBBBBWWWWWBBB
+BBBBBBWWWWWWBBBB
+BBBBWWWWWWWBBBBB
+BBWWWWWWWWBBBBBB
+BBBWWWWWWWWBBBBB
+BBBBBWWBWWWWBBBB
+BBBBBWBBBWWWWBBB
+BBBBWBBBBBBWWBBB
+BBBBBBBBBBBBBBBB
+BBBBBBBBBBBBBBBB
+.BBBBBBBBBBBBBB.
+..BBBBBBBBBBBB..
+`,
+  { B: "#29a9eb", W: "#ffffff" },
+);
+
+const WIKIPEDIA = mark(
+  `
+..BBBBBBBBBBBB..
+.BBBBBBBBBBBBBB.
+BBBBBBBBBBBBBBBB
+BBDBBBBDBBBBDBBB
+BBDBBBBDBBBBDBBB
+BBDBBBBDBBBBDBBB
+BBDBBBBDBBBBDBBB
+BBDBBDDDDBBBDBBB
+BBDBBDBBDBBBDBBB
+BBDDBDBBDBBDDBBB
+BBBDDDBBDDDDBBBB
+BBBBDDBBBBDDBBBB
+BBBBBBBBBBBBBBBB
+BBBBBBBBBBBBBBBB
+.BBBBBBBBBBBBBB.
+..BBBBBBBBBBBB..
+`,
+  { B: "#f8f9fa", D: "#202122" },
+);
+
+const FANDOM = mark(
+  `
+..BBBBBBBBBBBB..
+.BBBBBBBBBBBBBB.
+BBBBBBBWWBBBBBBB
+BBBBBBWWWWBBBBBB
+BBBBBWWWWWWBBBBB
+BBBBWWWWWWWWBBBB
+BBBWWWBBBBWWWBBB
+BBWWWBBBBBBWWWBB
+BBWWBBBWWBBBWWBB
+BBWBBBWWWWBBBWBB
+BBBBBWWWWWWBBBBB
+BBBBBBWWWWBBBBBB
+BBBBBBBWWBBBBBBB
+BBBBBBBBBBBBBBBB
+.BBBBBBBBBBBBBB.
+..BBBBBBBBBBBB..
+`,
+  { B: "#fa005a", W: "#ffffff" },
+);
+
+const LINKEDIN = mark(
+  `
+BBBBBBBBBBBBBBBB
+BBBBBBBBBBBBBBBB
+BBWWBBBBBBBBBBBB
+BBWWBBBBBBBBBBBB
+BBBBBBBBBBBBBBBB
+BBWWBBWWWWWWBBBB
+BBWWBBWWWWWWWWBB
+BBWWBBWWBBBBWWBB
+BBWWBBWWBBBBWWBB
+BBWWBBWWBBBBWWBB
+BBWWBBWWBBBBWWBB
+BBWWBBWWBBBBWWBB
+BBBBBBBBBBBBBBBB
+BBBBBBBBBBBBBBBB
+BBBBBBBBBBBBBBBB
+BBBBBBBBBBBBBBBB
+`,
+  { B: "#0a66c2", W: "#ffffff" },
+);
+
+const INSTAGRAM = mark(
+  `
+..BBBBAAAAAABB..
+.BBBBBAAAAAAAAB.
+BBBBBBAAAAAAAAAB
+BBWWWWWWWWWWWWAA
+BBWBBBBBBBBBBWAA
+BBWBBBBWWBBBBWAA
+BBWBBWWBBWWBBWAA
+BBWBBWBBBBWBBWDD
+BBWBBWBBBBWBBWDD
+BBWBBWWBBWWBBWDD
+BBWBBBBWWBBBBWDD
+BBWBBBBBBBBBBWDD
+BBWWWWWWWWWWWWDD
+BBBBDDDDDDDDDDDD
+.BBBDDDDDDDDDDD.
+..BDDDDDDDDDDD..
+`,
+  { B: "#f9ce34", A: "#ee2a7b", D: "#6228d7", W: "#ffffff" },
+);
+
+const FACEBOOK = mark(
+  `
+..BBBBBBBBBBBB..
+.BBBBBBBBBBBBBB.
+BBBBBBBBBBBBBBBB
+BBBBBBBWWWWWBBBB
+BBBBBBWWBBBBBBBB
+BBBBBBWWBBBBBBBB
+BBBBWWWWWWWBBBBB
+BBBBWWWWWWWBBBBB
+BBBBBBWWBBBBBBBB
+BBBBBBWWBBBBBBBB
+BBBBBBWWBBBBBBBB
+BBBBBBWWBBBBBBBB
+BBBBBBWWBBBBBBBB
+BBBBBBBBBBBBBBBB
+.BBBBBBBBBBBBBB.
+..BBBBBBBBBBBB..
+`,
+  { B: "#1877f2", W: "#ffffff" },
+);
+
+const YOUTUBE = mark(
+  `
+................
+................
+..BBBBBBBBBBBB..
+.BBBBBBBBBBBBBB.
+BBBBBBBBBBBBBBBB
+BBBBBWWBBBBBBBBB
+BBBBBWWWWBBBBBBB
+BBBBBWWWWWWBBBBB
+BBBBBWWWWWWWWBBB
+BBBBBWWWWWWBBBBB
+BBBBBWWWWBBBBBBB
+BBBBBWWBBBBBBBBB
+BBBBBBBBBBBBBBBB
+.BBBBBBBBBBBBBB.
+..BBBBBBBBBBBB..
+................
+`,
+  { B: "#ff0000", W: "#ffffff" },
+);
+
+const KOFI = mark(
+  `
+..BBBBBBBBBBBB..
+.BBBBBBBBBBBBBB.
+BBBBWBBWBBWBBBBB
+BBBBWBBWBBWBBBBB
+BBBBBBBBBBBBBBBB
+BBWWWWWWWWWWBBBB
+BBWDDDDDDDDWWWBB
+BBWDDDDDDDDWBWBB
+BBWDDDDDDDDWBWBB
+BBWDDDDDDDDWWWBB
+BBWWDDDDDDWWBBBB
+BBBWWWWWWWWBBBBB
+BBBBWWWWWWBBBBBB
+BBBBBBBBBBBBBBBB
+.BBBBBBBBBBBBBB.
+..BBBBBBBBBBBB..
+`,
+  { B: "#ff5e5b", W: "#ffffff", D: "#ff5e5b" },
+);
+
+const TOYHOUSE = mark(
+  `
+..BBBBBBBBBBBB..
+.BBBBBBBBBBBBBB.
+BBBBBBBWWBBBBBBB
+BBBBBBWWWWBBBBBB
+BBBBBWWWWWWBBBBB
+BBBBWWWWWWWWBBBB
+BBBWWWWWWWWWWBBB
+BBWWWWWWWWWWWWBB
+BBBWWBBBBBBWWBBB
+BBBWWBBWWBBWWBBB
+BBBWWBBWWBBWWBBB
+BBBWWBBWWBBWWBBB
+BBBWWWWWWWWWWBBB
+BBBBBBBBBBBBBBBB
+.BBBBBBBBBBBBBB.
+..BBBBBBBBBBBB..
+`,
+  { B: "#4d7cfe", W: "#ffffff" },
+);
+
+const ETSY = mark(
+  `
+..BBBBBBBBBBBB..
+.BBBBBBBBBBBBBB.
+BBBBBBBBBBBBBBBB
+BBBBWWWWWWWWBBBB
+BBBBWWBBBBBBBBBB
+BBBBWWBBBBBBBBBB
+BBBBWWBBBBBBBBBB
+BBBBWWWWWWWBBBBB
+BBBBWWBBBBBBBBBB
+BBBBWWBBBBBBBBBB
+BBBBWWBBBBBBBBBB
+BBBBWWWWWWWWBBBB
+BBBBBBBBBBBBBBBB
+BBBBBBBBBBBBBBBB
+.BBBBBBBBBBBBBB.
+..BBBBBBBBBBBB..
+`,
+  { B: "#f1641e", W: "#ffffff" },
+);
+
+const MAPS = mark(
+  `
+................
+......DDDD......
+....DDWWWWDD....
+...DDWWWWWWDD...
+...DWWWAAWWWD...
+..BDWWAAAAWWDA..
+..BDWWAAAAWWDA..
+..BBDWWAAWWDAA..
+..BBBDWWWWDAAA..
+...BBBDWWDAAA...
+....BBBDDAAA....
+.....BBDDAA.....
+......BDDA......
+......BDDA......
+.......DD.......
+................
+`,
+  { B: "#34a853", D: "#ea4335", W: "#ffffff", A: "#fbbc04" },
+);
+
+const NEWS = mark(
+  `
+..DDDDDDDDDDDD..
+..DWWWWWWWWWWD..
+..DWDDDDDDDDWD..
+..DWWWWWWWWWWD..
+..DWDDDWDDDDWD..
+..DWDDDWDDDDWD..
+..DWDDDWWWWWWD..
+..DWDDDWDDDDWD..
+..DWWWWWDDDDWD..
+..DWDDDDDDDDWD..
+..DWDDDDWDDDWD..
+..DWDDDDWDDDWD..
+..DWWWWWWWWWWD..
+..DWDDDDDDDDWD..
+..DWWWWWWWWWWD..
+..DDDDDDDDDDDD..
+`,
+  { D: "#2b2438", W: "#fff8ec" },
+);
+
+const BLOG = mark(
+  `
+..BBBBBBBBBBBB..
+.BBBBBBBBBBBBBB.
+BBBBBBBBBBBWWBBB
+BBBBBBBBBBWWWWBB
+BBBBBBBBBWWWWDBB
+BBBBBBBBWWWWDBBB
+BBBBBBBWWWWDBBBB
+BBBBBBWWWWDBBBBB
+BBBBBWWWWDBBBBBB
+BBBBWWWWDBBBBBBB
+BBBWWWWDBBBBBBBB
+BBBWWWDBBBBBBBBB
+BBBWWDBBBBBBBBBB
+BBBBBBBBBBBBBBBB
+.BBBBBBBBBBBBBB.
+..BBBBBBBBBBBB..
+`,
+  { B: "#3fca7a", W: "#ffffff", D: "#21a459" },
+);
+
+const VRCHAT = mark(
+  `
+..BBBBBBBBBBBB..
+.BBBBBBBBBBBBBB.
+BBBBBBBBBBBBBBBB
+BBWWWWWWWWWWWWBB
+BWWWWWWWWWWWWWWB
+BWWDDWWWWWWDDWWB
+BWWDDWWWWWWDDWWB
+BWWWWWWWWWWWWWWB
+BBWWWWWWWWWWWWBB
+BBBBWWBBBBWWBBBB
+BBBBBBBBBBBBBBBB
+BBBBBBBBBBBBBBBB
+BBBBBBBBBBBBBBBB
+BBBBBBBBBBBBBBBB
+.BBBBBBBBBBBBBB.
+..BBBBBBBBBBBB..
+`,
+  { B: "#2fc6dd", W: "#ffffff", D: "#12708a" },
+);
+
+const WAYBACK = mark(
+  `
+................
+.......WW.......
+......WWWW......
+.....WWWWWW.....
+....WWWWWWWW....
+...WWWWWWWWWW...
+..WWWWWWWWWWWW..
+..WWWWWWWWWWWW..
+..WBWBWBWBWBWW..
+..WBWBWBWBWBWW..
+..WBWBWBWBWBWW..
+..WBWBWBWBWBWW..
+..WBWBWBWBWBWW..
+..WWWWWWWWWWWW..
+..WWWWWWWWWWWW..
+................
+`,
+  { W: "#2b2438", B: "#fff8ec" },
+);
+
+const SEARCH = mark(
+  `
+................
+....WWWWWW......
+...WBBBBBBW.....
+..WBBWWWWBBW....
+..WBWWWWWWBW....
+..WBWWWWWWBW....
+..WBBWWWWBBW....
+...WBBBBBBW.....
+....WWWWWWDD....
+..........DDDD..
+...........DDD..
+............DD..
+................
+................
+................
+................
+`,
+  { W: "#4d7cfe", B: "#ffffff", D: "#2b2438" },
+);
+
+const DM = mark(
+  `
+................
+..BBBBBBBBBBBB..
+.BBBBBBBBBBBBBB.
+BBWWWWWWWWWWWWBB
+BBWBBBBBBBBBBWBB
+BBWBWWWWWWWWBWBB
+BBWBBBBBBBBBBWBB
+BBWBWWWWWWBBBWBB
+BBWBBBBBBBBBBWBB
+BBWWWWWWWWWWWWBB
+.BBBWWBBBBBBBBB.
+..BWWBBBBBBBBB..
+...WBBBBBBBBB...
+................
+................
+................
+`,
+  { B: "#a86bf0", W: "#ffffff" },
+);
+
+export const LOGOS: Readonly<Record<PlatformId, Sprite>> = {
+  bluesky: BLUESKY,
+  reddit: REDDIT,
+  discord: DISCORD,
+  furaffinity: FURAFFINITY,
+  telegram: TELEGRAM,
+  wikipedia: WIKIPEDIA,
+  fandom: FANDOM,
+  linkedin: LINKEDIN,
+  instagram: INSTAGRAM,
+  facebook: FACEBOOK,
+  youtube: YOUTUBE,
+  kofi: KOFI,
+  toyhouse: TOYHOUSE,
+  etsy: ETSY,
+  maps: MAPS,
+  news: NEWS,
+  blog: BLOG,
+  vrchat: VRCHAT,
+  wayback: WAYBACK,
+  search: SEARCH,
+  dm: DM,
+};
+
+/** Display name and chrome color for each platform. */
+export const PLATFORM_META: Readonly<
+  Record<PlatformId, { name: string; brand: string; ink: string }>
+> = {
+  bluesky: { name: "Bluesky", brand: "#0085ff", ink: "#ffffff" },
+  reddit: { name: "Reddit", brand: "#ff4500", ink: "#ffffff" },
+  discord: { name: "Discord", brand: "#5865f2", ink: "#ffffff" },
+  furaffinity: { name: "Fur Affinity", brand: "#2e3b41", ink: "#ffb877" },
+  telegram: { name: "Telegram", brand: "#29a9eb", ink: "#ffffff" },
+  wikipedia: { name: "Wikipedia", brand: "#f8f9fa", ink: "#202122" },
+  fandom: { name: "Fandom", brand: "#fa005a", ink: "#ffffff" },
+  linkedin: { name: "LinkedIn", brand: "#0a66c2", ink: "#ffffff" },
+  instagram: { name: "Instagram", brand: "#c13584", ink: "#ffffff" },
+  facebook: { name: "Facebook", brand: "#1877f2", ink: "#ffffff" },
+  youtube: { name: "YouTube", brand: "#ff0000", ink: "#ffffff" },
+  kofi: { name: "Ko-fi", brand: "#ff5e5b", ink: "#ffffff" },
+  toyhouse: { name: "Toyhouse", brand: "#4d7cfe", ink: "#ffffff" },
+  etsy: { name: "Etsy", brand: "#f1641e", ink: "#ffffff" },
+  maps: { name: "Google Maps", brand: "#ffffff", ink: "#3c4043" },
+  news: { name: "Local news", brand: "#2b2438", ink: "#fff8ec" },
+  blog: { name: "Blog", brand: "#3fca7a", ink: "#ffffff" },
+  vrchat: { name: "VRChat", brand: "#2fc6dd", ink: "#ffffff" },
+  wayback: { name: "Wayback Machine", brand: "#2b2438", ink: "#fff8ec" },
+  search: { name: "Google", brand: "#ffffff", ink: "#3c4043" },
+  dm: { name: "Messages", brand: "#a86bf0", ink: "#ffffff" },
+};

@@ -1,0 +1,683 @@
+/* ---------------------------------------------------------------------------
+   Platform skins.
+
+   Each site keeps its real layout, chrome color and information hierarchy —
+   that's what makes it recognizable at a glance. What they don't keep is their
+   typeface: everything renders in the game's pixel body font so the pages sit
+   inside the pixel frame instead of fighting it.
+--------------------------------------------------------------------------- */
+
+.page {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.page b {
+  font-weight: 700;
+}
+
+/* --- shared bits ---------------------------------------------------------- */
+
+/* Photos are described, not drawn. Styled as a real photo frame so it reads as
+   "here is an image" rather than as missing content. */
+.pf-imgbox {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 14px 16px 14px 44px;
+  min-height: 74px;
+  background-color: #efe6f7;
+  background-image:
+    repeating-linear-gradient(45deg, rgb(0 0 0 / 0.035) 0 6px, transparent 6px 12px);
+  border: 2px solid rgb(43 36 56 / 0.28);
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #4a3f5c;
+}
+
+.pf-imgbox::before {
+  content: "";
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  width: 18px;
+  height: 16px;
+  margin-top: -8px;
+  background: #a86bf0;
+  box-shadow:
+    0 0 0 2px #2b2438,
+    6px 4px 0 0 #ffd43f,
+    -3px 3px 0 0 #3fca7a;
+}
+
+.pf-imgbox--big {
+  min-height: 150px;
+  font-size: 14px;
+}
+
+.pf-avatar {
+  image-rendering: pixelated;
+  border-radius: 50%;
+  background: #fff;
+  flex: 0 0 auto;
+}
+
+.pf-initial {
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  font-weight: 700;
+  flex: 0 0 auto;
+  line-height: 1;
+}
+
+/* --- Google results ------------------------------------------------------- */
+
+.srp {
+  font-family: var(--font-body);
+}
+
+/* --- Bluesky -------------------------------------------------------------- */
+
+.bsky {
+  background: #fff;
+  color: #0b0f14;
+  min-height: 100%;
+}
+
+.bsky-banner {
+  height: 120px;
+  background: linear-gradient(120deg, #0085ff, #62d0ff);
+}
+
+.bsky-head {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 16px;
+  padding: 0 20px 16px;
+  border-bottom: 1px solid #e3e8ee;
+}
+
+.bsky-bigpfp {
+  margin-top: -34px;
+  border: 4px solid #fff;
+  width: 80px;
+  height: 80px;
+}
+
+.bsky-headmeta {
+  padding-top: 10px;
+}
+
+.bsky-headmeta h1 {
+  font-size: 23px;
+}
+
+.bsky-handle {
+  color: #566573;
+  font-size: 14px;
+}
+
+.bsky-stats {
+  margin: 8px 0;
+  font-size: 14px;
+  color: #566573;
+  display: flex;
+  gap: 14px;
+}
+
+.bsky-stats b {
+  color: #0b0f14;
+}
+
+.bsky-bio {
+  font-size: 15px;
+  max-width: 54ch;
+}
+
+.bsky-joined {
+  font-size: 13px;
+  color: #8a97a5;
+  margin-top: 6px;
+}
+
+.bsky-follow {
+  align-self: start;
+  margin-top: 14px;
+  padding: 8px 20px;
+  background: #0085ff;
+  color: #fff;
+  border: 0;
+  border-radius: 999px;
+  font-weight: 700;
+  opacity: 0.55;
+}
+
+.bsky-pinned {
+  padding: 10px 20px;
+  background: #f2f8ff;
+  border-bottom: 1px solid #e3e8ee;
+  font-size: 14px;
+}
+
+.bsky-tabs {
+  display: flex;
+  gap: 26px;
+  padding: 0 20px;
+  border-bottom: 1px solid #e3e8ee;
+  font-size: 14px;
+  color: #566573;
+}
+
+.bsky-tabs span {
+  padding: 12px 0;
+}
+
+.bsky-tabs .is-on {
+  color: #0b0f14;
+  font-weight: 700;
+  box-shadow: inset 0 -3px 0 0 #0085ff;
+}
+
+.bsky-post {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid #e9edf2;
+}
+
+.bsky-meta {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  flex-wrap: wrap;
+  font-size: 14px;
+}
+
+.bsky-name {
+  font-weight: 700;
+}
+
+.bsky-dot,
+.bsky-time {
+  color: #8a97a5;
+}
+
+.bsky-replyto {
+  font-size: 13px;
+  color: #8a97a5;
+  margin-top: 2px;
+}
+
+.bsky-text {
+  margin-top: 3px;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.bsky-quote {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border: 1px solid #d9e1ea;
+  border-radius: 8px;
+}
+
+.bsky-image {
+  margin: 10px 0 0;
+}
+
+.bsky-image figcaption {
+  margin-top: 5px;
+  font-size: 13px;
+  color: #566573;
+}
+
+.bsky-actions {
+  display: flex;
+  gap: 34px;
+  margin-top: 10px;
+  font-size: 13px;
+  color: #8a97a5;
+}
+
+.bsky-replies {
+  border-left: 3px solid #e3e8ee;
+  margin-left: 30px;
+}
+
+/* --- Fur Affinity --------------------------------------------------------- */
+
+.fa {
+  background: #30363d;
+  color: #d8dee6;
+  min-height: 100%;
+  font-size: 14px;
+}
+
+.fa-top {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 10px 18px;
+  background: #2e3b41;
+  border-bottom: 2px solid #1a2226;
+}
+
+.fa-wordmark {
+  font-weight: 700;
+  color: #ffb877;
+  letter-spacing: 0.02em;
+}
+
+.fa-nav {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: #a8b4bf;
+}
+
+.fa-user {
+  margin-left: auto;
+  font-size: 12px;
+  color: #7d8b97;
+}
+
+.fa-body {
+  padding: 18px;
+  display: grid;
+  gap: 16px;
+}
+
+.fa-userhead {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 18px;
+  align-items: start;
+  padding: 16px;
+  background: #3b434b;
+  border: 1px solid #232b31;
+}
+
+.fa-bigpfp {
+  width: 100px;
+  height: 100px;
+  border-radius: 0;
+  background: #2e3b41;
+  border: 2px solid #1a2226;
+}
+
+.fa-userhead h1 {
+  font-size: 21px;
+  color: #ffb877;
+}
+
+.fa-status {
+  margin-top: 4px;
+  color: #c3ccd5;
+}
+
+.fa-reg {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #8b98a4;
+}
+
+.fa-stats {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 4px 18px;
+  margin: 0;
+  font-size: 12px;
+}
+
+.fa-stats div {
+  display: flex;
+  gap: 6px;
+}
+
+.fa-stats dt {
+  color: #8b98a4;
+}
+
+.fa-stats dd {
+  margin: 0;
+  color: #ffb877;
+}
+
+.fa-panel {
+  padding: 14px 16px;
+  background: #3b434b;
+  border: 1px solid #232b31;
+}
+
+.fa-panel h2 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #ffb877;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #4d5761;
+}
+
+.fa-profile,
+.fa-jbody {
+  line-height: 1.7;
+  max-width: 74ch;
+}
+
+.fa-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.fa-thumb {
+  margin: 0;
+}
+
+.fa-thumb figcaption {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #c3ccd5;
+}
+
+.fa-journal + .fa-journal {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid #4d5761;
+}
+
+.fa-journal h3,
+.fa-journal--solo h1 {
+  color: #ffb877;
+  font-size: 17px;
+}
+
+.fa-jdate,
+.fa-subdate {
+  font-size: 12px;
+  color: #8b98a4;
+  margin: 4px 0 10px;
+}
+
+.fa-comment {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid #4d5761;
+}
+
+.fa-comment--in {
+  margin-left: 40px;
+}
+
+.fa-pfp {
+  border-radius: 0;
+  border: 1px solid #1a2226;
+  background: #2e3b41;
+}
+
+.fa-cmeta b {
+  color: #ffb877;
+}
+
+.fa-cmeta span {
+  font-size: 12px;
+  color: #8b98a4;
+  margin-left: 8px;
+}
+
+.fa-submission {
+  padding: 16px;
+  background: #3b434b;
+  border: 1px solid #232b31;
+}
+
+.fa-subhead h1 {
+  margin-top: 14px;
+  color: #ffb877;
+  font-size: 20px;
+}
+
+.fa-subby {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.fa-inlinepfp {
+  border-radius: 0;
+}
+
+.fa-desc {
+  margin-top: 14px;
+  line-height: 1.7;
+  max-width: 74ch;
+}
+
+.fa-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.fa-tags span {
+  padding: 2px 8px;
+  background: #2e3b41;
+  border: 1px solid #4d5761;
+  font-size: 12px;
+  color: #a8b4bf;
+}
+
+.fa-foot {
+  padding: 14px 18px;
+  font-size: 12px;
+  color: #7d8b97;
+  border-top: 1px solid #232b31;
+}
+
+.fa .pf-imgbox {
+  background-color: #2a3238;
+  border-color: #1a2226;
+  color: #c3ccd5;
+}
+
+/* --- Reddit --------------------------------------------------------------- */
+
+.rd {
+  background: #dae0e6;
+  min-height: 100%;
+  color: #1c1c1c;
+  font-size: 14px;
+}
+
+.rd-top {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 8px 16px;
+  background: #fff;
+  border-bottom: 1px solid #ccc;
+}
+
+.rd-wordmark {
+  color: #ff4500;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.rd-searchbar {
+  flex: 1;
+  max-width: 520px;
+  padding: 6px 12px;
+  background: #f6f7f8;
+  border: 1px solid #d3d6da;
+  border-radius: 18px;
+  color: #878a8c;
+  font-size: 13px;
+}
+
+.rd-sub {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #fff;
+  border-bottom: 1px solid #ccc;
+}
+
+.rd-subicon {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #ff4500;
+  color: #fff;
+  font-weight: 700;
+}
+
+.rd-join {
+  margin-left: auto;
+  padding: 3px 16px;
+  background: #0079d3;
+  color: #fff;
+  border: 0;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+.rd-post {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  margin: 12px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.rd-votes {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 2px;
+  padding: 8px 0;
+  background: #f8f9fa;
+  font-size: 12px;
+}
+
+.rd-up {
+  color: #ff4500;
+}
+
+.rd-down {
+  color: #7193ff;
+}
+
+.rd-content {
+  padding: 10px 14px 12px;
+}
+
+.rd-byline {
+  font-size: 12px;
+  color: #787c7e;
+}
+
+.rd-content h1 {
+  margin: 6px 0;
+  font-size: 19px;
+  line-height: 1.35;
+}
+
+.rd-flair {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  background: #edeff1;
+  border-radius: 2px;
+  font-size: 11px;
+  font-weight: 400;
+  vertical-align: middle;
+}
+
+.rd-body {
+  line-height: 1.6;
+  max-width: 72ch;
+}
+
+.rd-actions {
+  display: flex;
+  gap: 18px;
+  margin-top: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #878a8c;
+}
+
+.rd-comments {
+  margin: 0 12px 12px;
+  padding: 12px 14px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.rd-sortbar {
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #edeff1;
+  font-size: 12px;
+  color: #787c7e;
+}
+
+.rd-comment {
+  margin-left: calc(var(--depth) * 22px);
+  padding: 8px 0 8px 10px;
+  border-left: 2px solid #edeff1;
+}
+
+.rd-cmeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #787c7e;
+}
+
+.rd-cmeta b {
+  color: #1c1c1c;
+}
+
+.rd-op {
+  padding: 0 5px;
+  background: #0079d3;
+  color: #fff;
+  border-radius: 2px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.rd-cbody {
+  margin: 4px 0;
+  line-height: 1.55;
+  max-width: 70ch;
+}
+
+.rd-cactions {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #878a8c;
+}

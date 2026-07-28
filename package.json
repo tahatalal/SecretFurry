@@ -1,0 +1,31 @@
+{
+  "name": "secret-furry",
+  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "description": "A pixel-art deduction game about finding someone who doesn't want to be found.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "validate": "tsx scripts/validate-case.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "e2e": "playwright test",
+    "check": "npm run typecheck && npm run validate && npm run test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "@types/node": "^26.1.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.7",
+    "vitest": "^2.1.8"
+  },
+  "dependencies": {
+    "@fontsource/pixelify-sans": "^5.1.0",
+    "@fontsource/press-start-2p": "^5.1.0",
+    "@fontsource/silkscreen": "^5.1.0"
+  }
+}
