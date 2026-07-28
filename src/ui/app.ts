@@ -15,6 +15,7 @@ import {
   chapterComplete,
   chapterOf,
   closeTab,
+  dropTargets,
   fileClue,
   initialState,
   openSearch,
@@ -33,7 +34,7 @@ import { ACCESSORIES } from "../art/sprites/accessories.ts";
 import { aboutView, titleView } from "./views/title.ts";
 import { creatorView } from "./views/creator.ts";
 import { briefView, chapterEndView, notebookView } from "./views/brief.ts";
-import { playView } from "./views/play.ts";
+import { playView, type PlayCtx } from "./views/play.ts";
 import { composeView } from "./views/compose.ts";
 import { endingView } from "./views/ending.ts";
 
@@ -49,6 +50,22 @@ export function mount(root: HTMLElement, kase: CaseFile): void {
 
   /* --- rendering ---------------------------------------------------------- */
 
+  /*
+   * Diff against the previous frame so animations only play for things that
+   * genuinely just appeared. Re-render is whole-view; without this, every
+   * frame would restart the pop-in on every card on the board.
+   */
+  let seenPeople = new Set<string>();
+  let seenClues = new Set<string>();
+
+  function diffFresh(state: GameState): PlayCtx["fresh"] {
+    const people = new Set(state.known.filter((id) => !seenPeople.has(id)));
+    const clues = new Set(state.filed.filter((id) => !seenClues.has(id)));
+    seenPeople = new Set(state.known);
+    seenClues = new Set(state.filed);
+    return { people, clues };
+  }
+
   function render(): void {
     const state = store.get();
     let html: string;
@@ -62,7 +79,7 @@ export function mount(root: HTMLElement, kase: CaseFile): void {
         break;
       case "brief":
       case "play":
-        html = playView({ state, kase, heldClue: held });
+        html = playView({ state, kase, heldClue: held, fresh: diffFresh(state) });
         break;
       case "compose":
         html = composeView(state, kase);
@@ -84,10 +101,45 @@ export function mount(root: HTMLElement, kase: CaseFile): void {
       html += `<div class="toast ${tone}">${escapeHtml(state.toast)}</div>`;
     }
 
+    const scroll = snapshotScroll();
     root.innerHTML = html;
+    applyScroll(scroll);
     decorateChunks();
     restoreFocus();
     syncGhost();
+  }
+
+  /*
+   * Re-rendering is whole-view, which used to throw away wherever you were
+   * reading the moment you filed anything. Every scrollable region is keyed by
+   * selector and restored after the swap.
+   */
+  const SCROLLABLES = [
+    "#page",
+    ".profile",
+    ".web",
+    ".rail",
+    ".ct-controls",
+    ".srp__termlist",
+  ] as const;
+
+  function snapshotScroll(): Record<string, number> {
+    const out: Record<string, number> = { window: window.scrollY };
+    for (const sel of SCROLLABLES) {
+      const el = root.querySelector<HTMLElement>(sel);
+      if (el && el.scrollTop > 0) out[sel] = el.scrollTop;
+    }
+    return out;
+  }
+
+  function applyScroll(snap: Record<string, number>): void {
+    for (const sel of SCROLLABLES) {
+      const top = snap[sel];
+      if (top === undefined) continue;
+      const el = root.querySelector<HTMLElement>(sel);
+      if (el) el.scrollTop = top;
+    }
+    if (snap.window) window.scrollTo({ top: snap.window });
   }
 
   function notebookLines(state: GameState): string[] {
@@ -97,18 +149,17 @@ export function mount(root: HTMLElement, kase: CaseFile): void {
       .map((c) => `${kase.people[c.person]?.name ?? c.person} — ${c.label}`);
   }
 
-  /** Mark filed clues and make the rest draggable. */
+  /** Mark filed clues; the rest are draggable via pointer events. */
   function decorateChunks(): void {
     const state = store.get();
     const filed = new Set(state.filed);
     root.querySelectorAll<HTMLElement>(".chunk").forEach((el) => {
       const id = el.dataset.clue ?? "";
+      el.dataset.focusKey = id;
       if (filed.has(id)) {
         el.classList.add("is-filed");
-        el.removeAttribute("draggable");
-      } else {
-        el.setAttribute("draggable", "true");
-        if (id === held) el.classList.add("is-held");
+      } else if (id === held) {
+        el.classList.add("is-held");
       }
     });
   }
@@ -178,6 +229,8 @@ export function mount(root: HTMLElement, kase: CaseFile): void {
     return {
       ...store.get().sona,
       head: species.id,
+      // Species comes from the picked head's own list, so a shark never ends
+      // up on a horse skull.
       species: pick(species.examples),
       fur: pick(FUR_COLORS).id,
       marking: pick(MARKINGS).id,
@@ -343,6 +396,12 @@ export function mount(root: HTMLElement, kase: CaseFile): void {
     const target = event.target as HTMLElement | null;
     if (!target) return;
 
+    // A drag ends in a click event too; that click has already been handled.
+    if (suppressClick) {
+      suppressClick = false;
+      return;
+    }
+
     const chunk = target.closest<HTMLElement>(".chunk");
     if (chunk && !chunk.classList.contains("is-filed")) {
       pickUp(chunk.dataset.clue ?? "");
@@ -351,8 +410,10 @@ export function mount(root: HTMLElement, kase: CaseFile): void {
 
     const actor = target.closest<HTMLElement>("[data-act]");
     if (!actor) return;
-    // Sheets close when the backdrop is clicked, not the card.
-    if (actor.dataset.act === "close-sheet" && target.closest("[data-stop]")) return;
+    // The backdrop closes on click; the card inside it doesn't. This must not
+    // swallow the card's own explicit close button, which lives inside it.
+    const isBackdrop = actor.classList.contains("sheet");
+    if (actor.dataset.act === "close-sheet" && isBackdrop && target.closest("[data-stop]")) return;
     act(actor.dataset.act ?? "", actor, event);
   });
 
@@ -422,37 +483,13 @@ export function mount(root: HTMLElement, kase: CaseFile): void {
     }
   });
 
-  root.addEventListener("dragstart", (event) => {
-    const chunk = (event.target as HTMLElement).closest<HTMLElement>(".chunk");
-    if (!chunk) return;
-    const id = chunk.dataset.clue ?? "";
-    held = id;
-    (event as DragEvent).dataTransfer?.setData("text/plain", id);
-    chunk.classList.add("is-held");
-  });
+  /* --- dragging ------------------------------------------------------------
+     Pointer events rather than HTML5 drag-and-drop. The native API swaps the
+     cursor for its own drag image, so the clue label only ever showed up in
+     click-to-pick mode; this way the label rides the cursor however you move a
+     clue, and the drop zones can be as generous as we like.
+  ------------------------------------------------------------------------- */
 
-  root.addEventListener("dragover", (event) => {
-    const card = (event.target as HTMLElement).closest<HTMLElement>(".rail__card, .web__node");
-    if (!card) return;
-    event.preventDefault();
-    card.classList.add("is-drop");
-  });
-
-  root.addEventListener("dragleave", (event) => {
-    (event.target as HTMLElement)
-      .closest<HTMLElement>(".rail__card")
-      ?.classList.remove("is-drop");
-  });
-
-  root.addEventListener("drop", (event) => {
-    const card = (event.target as HTMLElement).closest<HTMLElement>(".rail__card, .web__node");
-    if (!card) return;
-    event.preventDefault();
-    const id = (event as DragEvent).dataTransfer?.getData("text/plain") || held;
-    dropOn(card.dataset.person ?? "", id);
-  });
-
-  /** The held clue rides along with the pointer. */
   const ghost = document.createElement("div");
   ghost.className = "held";
   ghost.hidden = true;
@@ -464,8 +501,16 @@ export function mount(root: HTMLElement, kase: CaseFile): void {
       return;
     }
     const clue = kase.clues[held];
+    if (!clue) {
+      ghost.hidden = true;
+      return;
+    }
+    // A clue about two people says so, because it can go on either of them.
+    const open = dropTargets(kase, clue).filter((id) => store.get().known.includes(id));
     ghost.hidden = false;
-    ghost.textContent = clue ? `${clue.label} — drop on someone` : "";
+    ghost.textContent = `${clue.label} — ${
+      open.length > 1 ? "fits either of them" : "drop it on someone"
+    }`;
     if (x === undefined || y === undefined) return;
     // Keep the label on screen and out from under the cursor.
     const box = ghost.getBoundingClientRect();
@@ -475,8 +520,83 @@ export function mount(root: HTMLElement, kase: CaseFile): void {
     ghost.style.top = `${Math.max(8, top)}px`;
   }
 
+  interface Pending {
+    id: string;
+    x: number;
+    y: number;
+    dragging: boolean;
+  }
+  let pending: Pending | null = null;
+  let suppressClick = false;
+
+  /** Who, if anyone, would receive a drop at this point. */
+  function personAtPoint(x: number, y: number): string | null {
+    const el = document.elementFromPoint(x, y) as HTMLElement | null;
+    if (!el) return null;
+    const node = el.closest<HTMLElement>("[data-person]");
+    if (node?.dataset.person) return node.dataset.person;
+    // Anywhere inside the open profile counts as that person.
+    if (el.closest(".profile")) return store.get().focus;
+    return null;
+  }
+
+  function paintHover(x: number, y: number): void {
+    const over = personAtPoint(x, y);
+    root.querySelectorAll<HTMLElement>("[data-person]").forEach((el) => {
+      el.classList.toggle("is-drop", Boolean(over) && el.dataset.person === over);
+    });
+    const profile = root.querySelector<HTMLElement>(".profile");
+    profile?.classList.toggle("is-drop", Boolean(over) && over === store.get().focus);
+  }
+
+  function clearHover(): void {
+    root.querySelectorAll(".is-drop").forEach((el) => el.classList.remove("is-drop"));
+  }
+
+  root.addEventListener("pointerdown", (event) => {
+    const chunk = (event.target as HTMLElement).closest<HTMLElement>(".chunk");
+    if (!chunk || chunk.classList.contains("is-filed")) return;
+    pending = {
+      id: chunk.dataset.clue ?? "",
+      x: event.clientX,
+      y: event.clientY,
+      dragging: false,
+    };
+  });
+
   document.addEventListener("pointermove", (event) => {
+    if (pending && !pending.dragging) {
+      const moved = Math.hypot(event.clientX - pending.x, event.clientY - pending.y);
+      if (moved > 5) {
+        pending.dragging = true;
+        held = pending.id;
+        render();
+      }
+    }
+    if (held) paintHover(event.clientX, event.clientY);
     syncGhost(event.clientX, event.clientY);
+  });
+
+  document.addEventListener("pointerup", (event) => {
+    const wasDragging = pending?.dragging ?? false;
+    pending = null;
+    if (!wasDragging) return;
+
+    // Dropping on someone files it; dropping anywhere else leaves the clue in
+    // hand, so it can still be placed with a second click.
+    suppressClick = true;
+    clearHover();
+    const who = personAtPoint(event.clientX, event.clientY);
+    if (who) dropOn(who, held);
+  });
+
+  /** Right-click puts a held clue back down. */
+  root.addEventListener("contextmenu", (event) => {
+    if (!held) return;
+    event.preventDefault();
+    held = null;
+    clearHover();
+    render();
   });
 
   render();

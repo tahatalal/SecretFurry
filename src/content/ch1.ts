@@ -103,7 +103,6 @@ export const CH1_CLUES: readonly Clue[] = [
       "Laminated hand-cut badges, no linework, one strong rim light from behind. It's a whole look and it's theirs.",
     provenance: "open",
     source: "vale_fa",
-    unlocks: ["midwest furs telegram"],
   },
   {
     id: "vale_con",
@@ -146,6 +145,41 @@ export const CH1_CLUES: readonly Clue[] = [
     provenance: "open",
     source: "midwest_telegram",
   },
+  /* --- the body in the suit ------------------------------------------------
+     What Vale looks like when they're being Vale, and the numbers that follow
+     them around. Both are the kind of detail you only get by looking hard.
+  ------------------------------------------------------------------------ */
+  {
+    id: "vale_suit",
+    person: "vale",
+    slot: "suit",
+    label: "Partial — head, handpaws, tail. Sunset gradient, cream chest",
+    detail:
+      "Not a full suit. Head, handpaws and tail over their own clothes, with a hand-cut badge clipped to the harness.",
+    provenance: "open",
+    source: "parade_thread",
+  },
+  {
+    id: "vale_build",
+    person: "vale",
+    slot: "build",
+    label: "About 5'6\", left-handed",
+    detail:
+      "Waves with the left in every parade frame, and stands a full head under Sprocket, who lists himself at six foot.",
+    provenance: "open",
+    source: "parade_thread",
+  },
+  {
+    id: "vale_ident",
+    person: "vale",
+    slot: "ident",
+    label: "FA member since Mar 2016 · Toyhouse since Jan 2017",
+    detail:
+      "Two registration dates eleven months apart, both under the same handle, neither ever changed.",
+    provenance: "open",
+    source: "vale_toyhouse",
+  },
+
   /* --- relationships ------------------------------------------------------ */
   {
     id: "vale_link_bramble",
@@ -240,6 +274,12 @@ Attendees who are not in suit line the route. It is common for photographers to 
         {
           heading: "Headless lounge",
           body: `A quiet, air-conditioned room where suiters can remove their heads, drink water, and cool down out of public view. Photography is prohibited. It is, by long tradition, where most of the convention's actual conversations happen.`,
+        },
+        {
+          heading: "Regional communities",
+          body: `Attendance draws heavily from the surrounding states, and most of that turnout is organised through year-round regional groups rather than by the convention itself. These are not run by MFF and are not listed in convention materials.
+
+The largest for the immediate region is the Midwest Furs group chat, at {{go:midwest_telegram|t.me/midwestfurs}}, covering Illinois, Wisconsin, Iowa and Indiana, and handling meets, carpools and room shares. Smaller city-level servers sit beneath it and are generally invite-only; the usual way in is to ask in the regional chat and wait for somebody to post a link.`,
         },
         {
           heading: "Culture",
@@ -351,7 +391,7 @@ I was not doing a bit.`,
       "Artist profile. Badges and reference sheets. Commissions: CLOSED. Registered since 2016.",
     chapter: 1,
     terms: ["valethemaned fur affinity", "valemaned fa", "vale fur affinity", "vale badges"],
-    unlocks: ["midwest furs telegram", "vale kofi"],
+    unlocks: ["vale kofi"],
     body: faUser({
       sona: VALE,
       handle: "valemaned",
@@ -464,7 +504,7 @@ Blocks 1–8 in this thread. 9–20 in the reply below. Find yourself, tag yours
           time: "Dec 2024",
           text: `BLOCK 14 — this was the good one. Best light of the whole parade, the corridor windows were doing something incredible around 2pm.`,
           image: {
-            alt: `Wide shot of a numbered parade block in a convention corridor. Front row centre is a maned wolf suit with sunset-gradient markings down the muzzle, one arm up mid-wave. Clipped to the harness is a hand-cut laminated badge with a small dark glyph in the corner.`,
+            alt: `Wide shot of a numbered parade block in a convention corridor. Front row centre is {{c:vale_suit|a maned wolf partial — head, handpaws and tail over ordinary clothes, sunset gradient down the muzzle fading to a cream chest}}, one arm up mid-wave. Clipped to the harness is a hand-cut laminated badge with a small dark glyph in the corner.`,
             caption: `{{c:vale_con|Block 14, MFF 2024}} — maned wolf front row, if that's you please say hi, this is my favourite frame of the entire weekend`,
           },
           replies: 14,
@@ -487,6 +527,13 @@ Blocks 1–8 in this thread. 9–20 in the reply below. Find yourself, tag yours
           likes: 30,
         },
         {
+          author: CAST.shutter,
+          handle: "shutterbugfox",
+          time: "Dec 2024",
+          text: `photographer note for anyone doing composites off these: {{c:vale_build|the maned wolf in block 14 waves with the left hand in all eleven frames I have of them, and stands a clear head shorter than Sprocket, who lists six foot on everything}}. Scale accordingly.`,
+          likes: 18,
+        },
+        {
           author: CAST.marrow,
           handle: "marrowsergal",
           time: "Nov 2025",
@@ -506,13 +553,14 @@ Blocks 1–8 in this thread. 9–20 in the reply below. Find yourself, tag yours
     blurb:
       "Regional chat for furs in IL / WI / IA / IN. Meet planning, con carpools, and a great deal of nonsense.",
     chapter: 1,
-    terms: ["midwest furs telegram", "midwest furs chat", "regional furry telegram"],
+    // Not indexed anywhere. You get in by following the invite off WikiFur.
+    terms: [],
     unlocks: ["rockford furmeet"],
     body: telegramGroup({
       group: "Midwest Furs",
       members: "1,204 members, 87 online",
       pinned:
-        "MEET RULES: no drama, no politics on main, tag NSFW, and if you're new say hi with your sona name and roughly where you are. — Bramble",
+        "MEET RULES: no drama, no politics on main, tag NSFW, and if you're new say hi with your sona name and roughly where you are. City servers are invite only — ask in here and someone will link you. Rockford is at {{go:local_discord|discord.gg/rockriverfurs}}. — Bramble",
       days: [
         {
           date: "March 14",
@@ -696,7 +744,7 @@ Not for trade. Not for sale. Not available for adoption, redesign, or "inspired 
 
 If you see this design somewhere I didn't put it, please tell me.`,
       log: [
-        { when: "Jan 2017", what: "Created by valemaned" },
+        { when: "Jan 2017", what: "{{c:vale_ident|Created by valemaned — account registered Jan 2017, eleven months after their Fur Affinity registration in March 2016}}" },
         { when: "Mar 2019", what: "Design refresh — gradient extended to chest" },
         {
           when: "Aug 2023",

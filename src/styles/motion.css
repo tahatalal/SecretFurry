@@ -1,0 +1,160 @@
+/* ---------------------------------------------------------------------------
+   Motion.
+
+   Stepped easing throughout, because smooth interpolation on a pixel interface
+   reads as blur. Everything here is short and low-amplitude — the game should
+   feel awake, not busy. All of it collapses under prefers-reduced-motion via
+   the zeroed duration tokens, plus the belt-and-braces block at the bottom.
+--------------------------------------------------------------------------- */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes beckon {
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px var(--meadow), 2px 2px 0 0 rgb(43 36 56 / 0.3);
+  }
+  50% {
+    box-shadow: 0 0 0 6px var(--meadow), 2px 2px 0 0 rgb(43 36 56 / 0.3);
+  }
+}
+
+@keyframes nudge {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes flashFiled {
+  0% {
+    background: var(--sunbeam);
+  }
+  100% {
+    background: var(--paper);
+  }
+}
+
+@keyframes drawIn {
+  from {
+    stroke-dashoffset: 120;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes blink {
+  0%,
+  92%,
+  100% {
+    opacity: 1;
+  }
+  95% {
+    opacity: 0.35;
+  }
+}
+
+/* --- where they're used --------------------------------------------------- */
+
+.title__card,
+.ct,
+.cm,
+.ending__card {
+  animation: rise var(--t-slow) var(--ease-step) both;
+}
+
+.sheet__card {
+  animation: popIn var(--t-med) var(--ease-step) both;
+}
+
+.toast {
+  animation: nudge var(--t-slow) var(--ease-step) both;
+}
+
+/*
+ * Everything below is scoped to `.is-new`, which the renderer only puts on
+ * things that appeared since the last frame. Re-rendering is whole-view, so
+ * without that scoping every keystroke would replay the pop-in on every card
+ * on the board — twitchy to look at, and enough to make the page never settle.
+ */
+.slot.is-new {
+  animation: flashFiled var(--t-slow) var(--ease-step) both;
+}
+
+.rail__card.is-new,
+.web__node.is-new,
+.web__knot.is-new {
+  animation: popIn var(--t-med) var(--ease-step) both;
+}
+
+.web__edge.is-new {
+  stroke-dasharray: 120;
+  animation: drawIn var(--t-slow) var(--ease-step) both;
+}
+
+/* The title screen's hero blinks once every few seconds. Nothing else on the
+   page moves, which is what makes it read as alive rather than as an effect. */
+.title__art img {
+  animation: blink 5.5s steps(1, end) infinite;
+}
+
+.srp__hit {
+  transition: transform var(--t-fast) var(--ease-step);
+}
+
+.srp__hit:hover {
+  transform: translateX(3px);
+}
+
+.lineup__card,
+.cm-option {
+  transition:
+    transform var(--t-fast) var(--ease-step),
+    background var(--t-fast) var(--ease-step);
+}
+
+.lineup__card:hover,
+.cm-option:hover {
+  transform: translateY(-2px);
+}
+
+.tab {
+  transition: background var(--t-fast) var(--ease-step);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

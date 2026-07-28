@@ -217,6 +217,116 @@ export const HEAD_AVIAN: Sprite = defineSprite(
   PROTO,
 );
 
+/** Wide brow tapering to a long snout. Horse, deer, kirin, antelope. */
+export const HEAD_LONG: Sprite = defineSprite(
+  `
+..OOO......................OOO..
+.OBBBO....................OBBBO.
+.OBPPO....................OPPBO.
+.OBPPO....................OPPBO.
+.OBPPBO..................OBPPBO.
+..OBPPO..................OPPBO..
+..OBBBO..................OBBBO..
+...OBBOOOOOOOOOOOOOOOOOOOOBBO...
+...OBBBBBBBBBBBBBBBBBBBBBBBBO...
+..OBBBBBBBBBBBBBBBBBBBBBBBBBBO..
+..OBBBBBBBBBBBBBBBBBBBBBBBBBSO..
+..OBBBBBBBBBBBBBBBBBBBBBBBBBSO..
+..OBBBBBOOBBBBBBBBBBBBOOBBBBSO..
+..OBBBBOEEOBBBBBBBBBBOEEOBBBSO..
+..OBBBOEWOEOBBBBBBBBOEWOEOBBSO..
+..OBBBOEOOEOBBBBBBBBOEOOEOBBSO..
+..OBBBBOEEOBBBBBBBBBBOEEOBBBSO..
+..OBBBBBOOBBBBBBBBBBBBOOBBBBSO..
+..OBBBBBBBBBBBBBBBBBBBBBBBBBSO..
+...OBBBBBBBBBBBBBBBBBBBBBBBSO...
+.....OBBBBBBBBBBBBBBBBBBBSO.....
+.......OBBBBBBBBBBBBBBBSO.......
+.........OBMMMMMMMMMMBO.........
+..........OMMMMMMMMMMO..........
+..........OMMMNNNNMMMO..........
+..........OMMMMNNMMMMO..........
+..........OMMMMOOMMMMO..........
+..........OMMMOTTOMMMO..........
+...........OMMMMMMMMO...........
+............OOOOOOOO............
+`,
+  PROTO,
+);
+
+/** Dorsal fin, wide toothy grin. Shark, orca, dolphin, sea dragon. */
+export const HEAD_FINNED: Sprite = defineSprite(
+  `
+..............OO................
+.............OSSO...............
+............OSSSSO..............
+...........OSSSSSSO.............
+..........OSSSSSSSSO............
+.........OBSSSSSSSSBO...........
+.....OOOOOOOOOOOOOOOOOOOOOO.....
+...OBBBBBBBBBBBBBBBBBBBBBBBBO...
+..OBBBBBBBBBBBBBBBBBBBBBBBBBBO..
+.OBBBBBBBBBBBBBBBBBBBBBBBBBBBBO.
+OBBBBBBBBBBBBBBBBBBBBBBBBBBBBBSO
+OBBBBBBBBBBBBBBBBBBBBBBBBBBBBBSO
+OBBBBBBBOOBBBBBBBBBBBBOOBBBBBBSO
+OBBBBBBOEEOBBBBBBBBBBOEEOBBBBBSO
+OBBBBBOEWOEOBBBBBBBBOEWOEOBBBBSO
+OBBBBBOEOOEOBBBBBBBBOEOOEOBBBBSO
+OBBBBBBOEEOBBBBBBBBBBOEEOBBBBBSO
+OBBBBBBBOOBBBBBBBBBBBBOOBBBBBBSO
+OBBOBOBBBBBMMMMMMMMMMBBBBBOBOBSO
+OBBOBOBBBBBMMMNNNNMMMBBBBBOBOBSO
+.OBBBBBBBBBMMMMMMMMMMBBBBBBBBSO.
+.OBBBBBBOOOOOOOOOOOOOOOOBBBBBSO.
+..OBBBBBOWTWTWTWTWTWTWTOBBBBSO..
+...OBBBBBOTTTTTTTTTTTTOBBBBSO...
+....OBBBBBOWTWTWTWTWTOBBBBSO....
+.....OBBBBBBBBBBBBBBBBBBBSO.....
+.......OBBBBBBBBBBBBBBBSO.......
+.........OBBBBBBBBBBBSO.........
+...........OBBBBBBBSO...........
+............OOOOOOOO............
+`,
+  PROTO,
+);
+
+/** Small round ears, broad jaw. Bear, hyena, raccoon, badger, boar. */
+export const HEAD_HEAVY: Sprite = defineSprite(
+  `
+................................
+...OOOO..................OOOO...
+..OBBBBO................OBBBBO..
+..OBPPBO................OBPPBO..
+..OBPPBO................OBPPBO..
+..OBBBBO................OBBBBO..
+...OBBOOOOOOOOOOOOOOOOOOOOBBO...
+..OBBBBBBBBBBBBBBBBBBBBBBBBBBO..
+.OBBBBBBBBBBBBBBBBBBBBBBBBBBBBO.
+OBBBBBBBBBBBBBBBBBBBBBBBBBBBBBSO
+OBBBBBBBBBBBBBBBBBBBBBBBBBBBBBSO
+OBBBBBBBBBBBBBBBBBBBBBBBBBBBBBSO
+OBBBBBBBOOBBBBBBBBBBBBOOBBBBBBSO
+OBBBBBBOEEOBBBBBBBBBBOEEOBBBBBSO
+OBBBBBOEWOEOBBBBBBBBOEWOEOBBBBSO
+OBBBBBOEOOEOBBBBBBBBOEOOEOBBBBSO
+OBBBBBBOEEOBBBBBBBBBBOEEOBBBBBSO
+OBBBBBBBOOBBBBBBBBBBBBOOBBBBBBSO
+.OBBBBBBBBBMMMMMMMMMMBBBBBBBBSO.
+..OBBBBBBBBMMMNNNNMMMBBBBBBBSO..
+..OBBBBBBBBMMMMNNMMMMBBBBBBBSO..
+..OBBBBBBBBMMMMOOMMMMBBBBBBBSO..
+...OBBBBBBBMMMOTTOMMMBBBBBBSO...
+....OBBBBBBMMMMMMMMMMBBBBBSO....
+.....OBBBBBMMMMMMMMMMBBBBSO.....
+.......OBBBMMMMMMMMMMBBSO.......
+.........OBMMMMMMMMMMSO.........
+..........OMMMMMMMMMMO..........
+...........OOOOOOOOOO...........
+`,
+  PROTO,
+);
+
 export interface SpeciesDef {
   readonly id: string;
   /** What a person would actually call this sona type in the creator. */
@@ -226,38 +336,167 @@ export interface SpeciesDef {
   readonly examples: readonly string[];
 }
 
+/*
+ * Eight head shapes, and under each one the species people in the fandom
+ * actually wear. The list is weighted the way a dealers' den is: an awful lot
+ * of canines and dragons, a healthy showing of protogens and sergals, and one
+ * of everything else.
+ */
 export const SPECIES: readonly SpeciesDef[] = [
   {
     id: "canid",
-    name: "Canid",
+    name: "Canine",
     head: HEAD_CANID,
-    examples: ["maned wolf", "fox", "coyote", "husky", "shepherd", "jackal"],
-  },
-  {
-    id: "round",
-    name: "Big Ears",
-    head: HEAD_ROUND,
-    examples: ["fennec", "bat", "mouse", "rabbit", "chinchilla", "deer"],
+    examples: [
+      "wolf",
+      "fox",
+      "husky",
+      "german shepherd",
+      "border collie",
+      "coyote",
+      "maned wolf",
+      "jackal",
+      "corgi",
+      "arctic fox",
+      "doberman",
+      "dingo",
+      "wolfdog",
+      "shiba",
+    ],
   },
   {
     id: "feline",
     name: "Feline",
     head: HEAD_FELINE,
-    examples: ["cat", "lynx", "snow leopard", "red panda", "otter", "ferret"],
+    examples: [
+      "cat",
+      "lynx",
+      "snow leopard",
+      "cheetah",
+      "tiger",
+      "lion",
+      "caracal",
+      "serval",
+      "red panda",
+      "otter",
+      "ferret",
+      "skunk",
+      "opossum",
+      "civet",
+    ],
   },
   {
     id: "horned",
     name: "Horned",
     head: HEAD_HORNED,
-    examples: ["dragon", "sergal", "protogen", "dutch angel dragon", "goat"],
+    examples: [
+      "dragon",
+      "sergal",
+      "protogen",
+      "synth",
+      "kobold",
+      "wickerbeast",
+      "eastern dragon",
+      "goat",
+      "ram",
+      "demon",
+    ],
+  },
+  {
+    id: "round",
+    name: "Big ears",
+    head: HEAD_ROUND,
+    examples: [
+      "fennec",
+      "bat",
+      "rabbit",
+      "mouse",
+      "chinchilla",
+      "jerboa",
+      "sugar glider",
+      "squirrel",
+      "bunny",
+      "lop",
+    ],
+  },
+  {
+    id: "long",
+    name: "Long muzzle",
+    head: HEAD_LONG,
+    examples: [
+      "horse",
+      "deer",
+      "kirin",
+      "goat",
+      "antelope",
+      "moose",
+      "okapi",
+      "unicorn",
+      "zebra",
+      "donkey",
+    ],
+  },
+  {
+    id: "heavy",
+    name: "Heavy set",
+    head: HEAD_HEAVY,
+    examples: [
+      "bear",
+      "hyena",
+      "raccoon",
+      "badger",
+      "boar",
+      "wolverine",
+      "panda",
+      "capybara",
+      "bull",
+      "tanuki",
+    ],
   },
   {
     id: "avian",
     name: "Avian",
     head: HEAD_AVIAN,
-    examples: ["gryphon", "corvid", "avali", "owl", "parrot"],
+    examples: [
+      "gryphon",
+      "corvid",
+      "avali",
+      "owl",
+      "parrot",
+      "hawk",
+      "raven",
+      "cockatiel",
+      "phoenix",
+      "eagle",
+    ],
+  },
+  {
+    id: "finned",
+    name: "Finned",
+    head: HEAD_FINNED,
+    examples: [
+      "shark",
+      "orca",
+      "dolphin",
+      "dutch angel dragon",
+      "axolotl",
+      "otter",
+      "seal",
+      "sea dragon",
+      "koi",
+      "leviathan",
+    ],
   },
 ] as const;
+
+/** Every species name in the game, for randomisation and validation. */
+export const ALL_SPECIES: readonly string[] = SPECIES.flatMap((s) => s.examples);
+
+/** The head shape that best fits a species name, for authoring NPCs. */
+export function headFor(species: string): string {
+  const found = SPECIES.find((s) => s.examples.includes(species.toLowerCase()));
+  return found?.id ?? "canid";
+}
 
 export function speciesById(id: string): SpeciesDef {
   return SPECIES.find((s) => s.id === id) ?? SPECIES[0]!;

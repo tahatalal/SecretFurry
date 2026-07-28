@@ -12,7 +12,7 @@
 import process from "node:process";
 import { CASE } from "../src/content/index.ts";
 import { matchesQuery } from "../src/engine/state.ts";
-import { clueIdsIn } from "../src/platforms/kit.ts";
+import { clueIdsIn, linkIdsIn } from "../src/platforms/kit.ts";
 import { CAUTIOUS, REUNION, WEIGHT } from "../src/engine/ending.ts";
 import type { ClueId, SourceDoc } from "../src/engine/types.ts";
 
@@ -131,22 +131,34 @@ function findable(source: SourceDoc): boolean {
   return false;
 }
 
+/** Pages linked to from a page you've already reached. */
+const linkedFrom = new Set<string>();
+
 let changed = true;
 while (changed) {
   changed = false;
   for (const source of sources) {
     if (reachedSources.has(source.id)) continue;
     if (!(source.requires ?? []).every((id) => reachedClues.has(id))) continue;
-    if (!findable(source)) continue;
+    // Reachable either by searching for it, or by following a link on a page
+    // you already found. Closed platforms only have the second route.
+    if (!findable(source) && !linkedFrom.has(source.id)) continue;
 
     reachedSources.add(source.id);
     changed = true;
     for (const t of source.unlocks ?? []) terms.add(t);
+    for (const id of linkIdsIn(source.body)) linkedFrom.add(id);
     for (const id of tokensBySource.get(source.id) ?? []) {
       if (reachedClues.has(id)) continue;
       reachedClues.add(id);
       for (const t of clues[id]?.unlocks ?? []) terms.add(t);
     }
+  }
+}
+
+for (const source of sources) {
+  for (const id of linkIdsIn(source.body)) {
+    if (!sourceIds.has(id)) fail(`${source.id} links to a page that doesn't exist: "${id}"`);
   }
 }
 
@@ -239,7 +251,9 @@ for (const source of sources) {
     );
   }
   if (PLACEHOLDER.test(visible)) fail(`${source.id} still contains placeholder text`);
-  if (!source.terms.length) fail(`${source.id} has no search terms — nothing can find it`);
+  if (!source.terms.length && !linkedFrom.has(source.id)) {
+    fail(`${source.id} has no search terms and nothing links to it — nothing can find it`);
+  }
   if (!source.blurb.trim()) fail(`${source.id} has no search-result blurb`);
 }
 

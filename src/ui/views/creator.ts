@@ -1,7 +1,7 @@
 import type { Fursona } from "../../art/fursona.ts";
 import { fursonaUrl } from "../../art/fursona.ts";
 import { EYE_COLORS, FUR_COLORS } from "../../art/palettes.ts";
-import { SPECIES, speciesById } from "../../art/sprites/heads.ts";
+import { ALL_SPECIES, SPECIES, speciesById } from "../../art/sprites/heads.ts";
 import { MARKINGS } from "../../art/sprites/markings.ts";
 import { ACCESSORIES } from "../../art/sprites/accessories.ts";
 import { esc } from "../../platforms/kit.ts";
@@ -77,13 +77,26 @@ export function creatorView(sona: Fursona): string {
           <section class="ct-block">
             <div class="px-label">Build</div>
             ${chipRow("head", sona.head, SPECIES.map((s) => ({ id: s.id, name: s.name })))}
-            <div class="ct-hint">${species.examples.join(" &middot; ")}</div>
           </section>
 
           <section class="ct-block">
             <label class="px-label" for="sona-species">Species</label>
             <input class="px-input" id="sona-species" type="text" maxlength="28"
-                   value="${esc(sona.species)}" data-act="sona-species">
+                   value="${esc(sona.species)}" data-act="sona-species"
+                   list="species-list" autocomplete="off">
+            <datalist id="species-list">
+              ${ALL_SPECIES.map((s) => `<option value="${esc(s)}"></option>`).join("")}
+            </datalist>
+            <div class="ct-species">
+              ${species.examples
+                .map(
+                  (s) =>
+                    `<button type="button" class="ct-species__pick${
+                      s === sona.species ? " is-on" : ""
+                    }" data-act="sona" data-field="species" data-value="${esc(s)}">${esc(s)}</button>`,
+                )
+                .join("")}
+            </div>
           </section>
 
           <section class="ct-block">

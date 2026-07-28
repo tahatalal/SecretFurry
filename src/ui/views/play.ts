@@ -9,18 +9,30 @@ import {
   chapterOf,
   connections,
   dossier,
+  dropTargets,
   isOverturned,
   linksFor,
   livePeople,
   search,
   type GameState,
 } from "../../engine/state.ts";
-import { SLOT_LABEL, SLOT_ORDER, type CaseFile, type SourceDoc } from "../../engine/types.ts";
+import {
+  PHYSICAL_SLOTS,
+  SLOT_LABEL,
+  SLOT_ORDER,
+  type CaseFile,
+  type SourceDoc,
+} from "../../engine/types.ts";
 
 export interface PlayCtx {
   readonly state: GameState;
   readonly kase: CaseFile;
   readonly heldClue: string | null;
+  /** Things that appeared since the last frame. Only these animate. */
+  readonly fresh: {
+    readonly people: ReadonlySet<string>;
+    readonly clues: ReadonlySet<string>;
+  };
 }
 
 /* --- top bar -------------------------------------------------------------- */
@@ -95,11 +107,15 @@ function searchPage(ctx: PlayCtx, query: string): string {
   const results = hits
     .map((doc: SourceDoc) => {
       const meta = PLATFORM_META[doc.platform];
+      // Visited links go purple, the way they do everywhere else on the web,
+      // so a long results page tells you where you've already been.
+      const seen = ctx.state.seen.includes(doc.id);
       return `
-        <div class="srp__hit" data-act="open-source" data-source="${esc(doc.id)}">
+        <div class="srp__hit${seen ? " is-seen" : ""}" data-act="open-source" data-source="${esc(doc.id)}">
           <div class="srp__crumb">${spriteImg(LOGOS[doc.platform], { scale: 1 })} ${esc(meta.name)} &rsaquo; ${esc(doc.url)}</div>
           <h3 class="srp__title">${esc(doc.title)}</h3>
           <div class="srp__blurb">${esc(doc.blurb)}</div>
+          ${seen ? `<div class="srp__seen">Visited</div>` : ""}
         </div>`;
     })
     .join("");
@@ -173,15 +189,25 @@ function browser(ctx: PlayCtx): string {
 
 /* --- dossier -------------------------------------------------------------- */
 
+/** People the held clue could legitimately be dropped on. */
+function heldTargets(ctx: PlayCtx): Set<string> {
+  const clue = ctx.heldClue ? ctx.kase.clues[ctx.heldClue] : null;
+  return new Set(clue ? dropTargets(ctx.kase, clue) : []);
+}
+
 function rail(ctx: PlayCtx): string {
   const people = livePeople(ctx.state, ctx.kase);
+  const targets = heldTargets(ctx);
+
   return `<div class="rail">
     ${people
       .map((p) => {
         const filled = dossier(ctx.state, ctx.kase, p.id).size;
         const on = ctx.state.focus === p.id;
+        const target = targets.has(p.id);
+        const fresh = ctx.fresh.people.has(p.id) ? " is-new" : "";
         return `
-          <button type="button" class="rail__card${on ? " is-on" : ""}"
+          <button type="button" class="rail__card${on ? " is-on" : ""}${target ? " is-target" : ""}${fresh}"
                   data-act="person" data-person="${esc(p.id)}"
                   title="${esc(p.name)} — ${esc(p.note)}">
             <img src="${fursonaUrl(p.sona)}" width="42" height="40" alt="" draggable="false">
@@ -190,7 +216,36 @@ function rail(ctx: PlayCtx): string {
           </button>`;
       })
       .join("")}
+    ${newProfileSlot(ctx)}
+    ${
+      people.length < 2 && !ctx.heldClue
+        ? `<span class="rail__hint">Everyone else is still out there somewhere.</span>`
+        : ""
+    }
   </div>`;
+}
+
+/**
+ * A clue that introduces somebody you haven't met needs a target, or it can
+ * never be filed. Holding one opens an empty slot on the rail; dropping there
+ * is what puts them on the board. The card stays anonymous until you do.
+ */
+function newProfileSlot(ctx: PlayCtx): string {
+  const clue = ctx.heldClue ? ctx.kase.clues[ctx.heldClue] : null;
+  if (!clue) return "";
+
+  const stranger = dropTargets(ctx.kase, clue).find(
+    (id) => !ctx.state.known.includes(id) && ctx.kase.people[id],
+  );
+  if (!stranger) return "";
+
+  return `
+    <button type="button" class="rail__card rail__card--new is-target"
+            data-act="person" data-person="${esc(stranger)}"
+            title="Start a new profile from this">
+      <span class="rail__plus">+</span>
+      <span class="rail__name">New</span>
+    </button>`;
 }
 
 function profile(ctx: PlayCtx): string {
@@ -199,8 +254,9 @@ function profile(ctx: PlayCtx): string {
   if (!person) return `<div class="profile"><p class="prose">No one yet.</p></div>`;
 
   const filed = dossier(ctx.state, ctx.kase, person.id);
+  const isTarget = heldTargets(ctx).has(person.id);
 
-  const rows = SLOT_ORDER.map((slot) => {
+  const row = (slot: (typeof SLOT_ORDER)[number]): string => {
     const clue = filed.get(slot);
     if (!clue) {
       return `<div class="slot" data-slot="${slot}">
@@ -210,7 +266,8 @@ function profile(ctx: PlayCtx): string {
       </div>`;
     }
     const flagged = clue.untrue && isOverturned(ctx.state, ctx.kase, clue.id);
-    return `<div class="slot is-filled${flagged ? " is-suspect" : ""}" data-slot="${slot}">
+    const fresh = ctx.fresh.clues.has(clue.id) ? " is-new" : "";
+    return `<div class="slot is-filled${flagged ? " is-suspect" : ""}${fresh}" data-slot="${slot}">
       <span class="slot__key">${SLOT_LABEL[slot]}</span>
       <span>
         <span class="slot__value">${esc(clue.label)}</span>
@@ -224,7 +281,22 @@ function profile(ctx: PlayCtx): string {
           : ""
       }
     </div>`;
-  }).join("");
+  };
+
+  // Body and identifiers sit in their own block — what they look like in suit,
+  // and the numbers that follow a person around, are a different kind of fact
+  // from where they work.
+  const physical = PHYSICAL_SLOTS.filter((s) => filed.has(s));
+  const life = SLOT_ORDER.filter((s) => !PHYSICAL_SLOTS.includes(s));
+
+  const rows =
+    life.map(row).join("") +
+    (physical.length
+      ? `<div class="profile__group">
+           <div class="px-label">Description</div>
+           ${physical.map(row).join("")}
+         </div>`
+      : "");
 
   const links = linksFor(ctx.state, ctx.kase, person.id);
   const linkRows = links.length
@@ -250,7 +322,8 @@ function profile(ctx: PlayCtx): string {
     : "";
 
   return `
-    <div class="profile px-scroll">
+    <div class="profile px-scroll${isTarget ? " is-target" : ""}" data-person="${esc(person.id)}"
+         data-act="person">
       <div class="profile__head">
         <img src="${fursonaUrl(person.sona)}" width="64" height="60" alt="" draggable="false">
         <div>
@@ -260,6 +333,11 @@ function profile(ctx: PlayCtx): string {
       </div>
       ${rows}
       ${linkRows}
+      ${
+        ctx.heldClue && isTarget
+          ? `<div class="profile__droppad">Drop it anywhere in here</div>`
+          : ""
+      }
     </div>`;
 }
 
@@ -304,25 +382,29 @@ function web(ctx: PlayCtx): string {
       const mx = (a.pos[0] + b.pos[0]) / 2;
       const my = (a.pos[1] + b.pos[1]) / 2;
       const on = ctx.state.focus === e.from || ctx.state.focus === e.to;
+      const fresh = ctx.fresh.clues.has(e.clue.id) ? " is-new" : "";
       return `
         <line x1="${a.pos[0]}" y1="${a.pos[1]}" x2="${b.pos[0]}" y2="${b.pos[1]}"
-              class="web__edge${e.weak ? " is-weak" : ""}${on ? " is-on" : ""}"
+              class="web__edge${e.weak ? " is-weak" : ""}${on ? " is-on" : ""}${fresh}"
               vector-effect="non-scaling-stroke" />
         <circle cx="${mx}" cy="${my}" r="1.6"
-                class="web__knot${e.weak ? " is-weak" : ""}"
+                class="web__knot${e.weak ? " is-weak" : ""}${fresh}"
                 vector-effect="non-scaling-stroke" />`;
     })
     .join("");
 
+  const targets = heldTargets(ctx);
   const nodes = people
     .map((p) => {
       const filled = dossier(ctx.state, ctx.kase, p.id).size;
       const degree = drawn.filter((e) => e.from === p.id || e.to === p.id).length;
       const on = ctx.state.focus === p.id;
+      const target = targets.has(p.id);
+      const fresh = ctx.fresh.people.has(p.id) ? " is-new" : "";
       const [nx, ny] = at(p.id);
       return `
         <button type="button"
-                class="web__node${on ? " is-on" : ""}${p.isSona ? " is-sona" : ""}${filled || degree ? "" : " is-cold"}"
+                class="web__node${on ? " is-on" : ""}${target ? " is-target" : ""}${p.isSona ? " is-sona" : ""}${filled || degree ? "" : " is-cold"}${fresh}"
                 style="left:${nx}%;top:${ny}%"
                 data-act="person" data-person="${esc(p.id)}"
                 title="${esc(p.name)} — ${esc(p.note)}">

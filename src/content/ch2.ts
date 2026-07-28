@@ -18,7 +18,7 @@ export const CH2: Chapter = {
   id: 2,
   name: "Circle",
   goal: "Find the city, find the local group, and find out who in it could actually be Vale.",
-  startTerms: ["rockford furmeet", "rock river furs", "midwest furs telegram"],
+  startTerms: ["rockford furmeet", "rock river furs"],
   keyClues: ["vale_city", "vale_circle", "vale_pet", "vale_work"],
   opening: `
 There is a thing about regional furry scenes that outsiders never guess: they are tiny, and they are held together by supply chains.
@@ -136,6 +136,75 @@ export const CH2_CLUES: readonly Clue[] = [
     source: "makers_group",
     untrue: true,
   },
+  /* --- the roster ---------------------------------------------------------
+     Nobody is on the board until you find them. These are the lines in June's
+     monthly thread that put a name to a person. ------------------------- */
+  {
+    id: "dev_name",
+    person: "dev",
+    slot: "name",
+    reveals: true,
+    label: "Dev Okonjo — tattoo apprentice, Iron Rose on 7th",
+    detail: "Blackwork only. Draws constantly and posts all of it.",
+    provenance: "open",
+    source: "makers_group",
+    unlocks: ["dev okonjo"],
+  },
+  {
+    id: "wren_name",
+    person: "wren",
+    slot: "name",
+    reveals: true,
+    label: "Wren Halloway — library maker space",
+    detail: "Runs the teen programme. Every 3D printer in the county goes through them.",
+    provenance: "open",
+    source: "makers_group",
+    unlocks: ["wren halloway"],
+  },
+  {
+    id: "priya_name",
+    person: "priya",
+    slot: "name",
+    reveals: true,
+    label: "Priya Raman — vet tech, North Main clinic",
+    detail: "Hand-sews. Two hundred stitches and not one of them crooked.",
+    provenance: "open",
+    source: "makers_group",
+    unlocks: ["priya raman"],
+  },
+  {
+    id: "theo_name",
+    person: "theo",
+    slot: "name",
+    reveals: true,
+    label: "Theo Lindqvist — community college, streams",
+    detail: "Afternoons, every weekday. Loud about all of it.",
+    provenance: "open",
+    source: "makers_group",
+    unlocks: ["theo lindqvist stream"],
+  },
+  {
+    id: "amos_name",
+    person: "amos",
+    slot: "name",
+    reveals: true,
+    label: "Amos Whitfield — youth pastor, Riverside",
+    detail: "Of everybody on this list he has the most to lose. Bring that up carefully.",
+    provenance: "open",
+    source: "makers_group",
+    unlocks: ["amos whitfield rockford"],
+  },
+  {
+    id: "nadia_name",
+    person: "nadia",
+    slot: "name",
+    reveals: true,
+    label: "Nadia Kelly — nights at the DC off Route 20",
+    detail: "Awake when nobody else is. Answers the group chat at four in the morning.",
+    provenance: "open",
+    source: "makers_group",
+    unlocks: ["nadia kelly rockford"],
+  },
   {
     id: "vale_city_chicago",
     person: "vale",
@@ -168,7 +237,8 @@ export const CH2_SOURCES: readonly SourceDoc[] = [
     blurb:
       "Regional server for furs in the Rockford / Rock River valley area. Meets, rides, and an unresolvable argument about Denny's.",
     chapter: 2,
-    terms: ["rock river furs", "rockford furmeet", "rockford furry discord"],
+    // Invite-only. The link is pinned in the regional Telegram group.
+    terms: [],
     unlocks: ["ferraro fabric and foam", "rockford mural 7th street"],
     body: discordChannel({
       server: "Rock River Furs",
@@ -659,20 +729,24 @@ That is all I am going to say about it, because it is not my business to say mor
       when: "Pinned by admin",
       body: `MONTHLY THREAD — say what you're working on, and if you need a tool somebody here has it.
 
-I'll start, since I'm the one who keeps asking: the shop has half-inch back in stock and I am not ordering minky again until people stop asking me for colours I already have.
+I'll start, since I'm the one who keeps asking: the shop has half-inch back in stock, the minky order landed on Tuesday, and I am not ordering more colours until people stop asking me for ones I already have on the wall. Come in. Look at the wall. The wall has the colours.
 
-Regulars, in no particular order, because somebody asked me to make a list and I regret agreeing:
+Second thing, and then the list. A few of you have asked me to stop calling this group "makers and menders" because it sounds like a quilting circle. It is a quilting circle. Nadia quilts. It is also foam, resin, upholstery, three separate people building things I have agreed not to describe, and one man who reupholstered an entire boat in my parking lot. The name stays.
+
+Regulars, in no particular order, because somebody asked me to make a list and I have regretted it every day since:
 
 — *Casey Brandt*, {{c:june_link_casey|HVAC by day, buys his half-inch off me for every build, owns the only industrial serger in the group and will let you use it if you ask nicely and bring your own thread}}.
-— *Dev Okonjo*, tattoo apprentice on 7th, blackwork, will draw anything on paper for free and charge you properly for skin.
-— *Wren Halloway*, runs the teen maker space at the library, knows every 3D printer in the county and which ones lie about their bed temperature.
-— *Priya Raman*, vet tech, does the most patient hand-sewing I have ever watched a human being do.
-— *Theo Lindqvist*, college, streams in the afternoons, showed up once with a 3D printed helmet and has been forgiven.
-— *Amos Whitfield*, youth pastor at Riverside, brings the good snacks and does not judge a single thing anyone in here makes.
-— *Nadia Kelly*, nights at the DC, only person who answers the group chat at 4am, quilts like it's a competitive sport.
+— {{c:dev_name|*Dev Okonjo*, tattoo apprentice at Iron Rose on 7th. Blackwork. Will draw anything on paper for free and charge you properly for skin, which is the correct way round}}.
+— {{c:wren_name|*Wren Halloway*, runs the teen maker space at the public library. Knows every 3D printer in the county and which ones lie about their bed temperature}}.
+— {{c:priya_name|*Priya Raman*, vet tech at the North Main clinic, does the most patient hand-sewing I have ever watched a human being do. Two hundred stitches and not one of them crooked}}.
+— {{c:theo_name|*Theo Lindqvist*, college, streams in the afternoons, showed up once with a 3D printed helmet that did not fit his head and has been forgiven}}.
+— {{c:amos_name|*Amos Whitfield*, youth pastor over at Riverside. Brings the good snacks. Does not judge a single thing anybody in this room makes, and I have watched him not judge some things}}.
+— {{c:nadia_name|*Nadia Kelly*, nights at the distribution centre off Route 20. The only person who answers this group at four in the morning. Quilts like it is a competitive sport}}.
 — *Marisol Enriquez*, {{c:june_link_marisol|teaches art at Kishwaukee, bought six weeks of drop cloths off me for a school mural and would not take the discount}}.
 
-That's eight and I know I'm forgetting people. Add yourselves.`,
+That's eight and I know I am forgetting people, so add yourselves in the comments and I will pretend I meant to include you all along.
+
+Third thing. Somebody left a heat gun here in April. It has been in the back room for five months. It is a nice heat gun. I am going to start using it.`,
       reactions: 112,
       comments: [
         {

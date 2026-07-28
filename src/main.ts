@@ -4,6 +4,7 @@ import "./styles/shell.css";
 import "./styles/screens.css";
 import "./styles/platforms.css";
 import "./styles/platforms2.css";
+import "./styles/motion.css";
 
 import { CASE } from "./content/index.ts";
 import { mount } from "./ui/app.ts";

@@ -19,6 +19,7 @@ import type {
   SourceDoc,
   SourceId,
 } from "./types.ts";
+import { SLOT_LABEL } from "./types.ts";
 
 export type Phase = "title" | "creator" | "brief" | "play" | "compose" | "ending";
 
@@ -46,6 +47,11 @@ export interface GameState {
   readonly focus: PersonId | null;
   /** Dossier panel mode: one person's facts, or everyone's connections. */
   readonly view: "profile" | "web";
+  /**
+   * People you have actually found. Everyone else does not exist yet as far as
+   * the board is concerned — you start knowing only that Vale is out there.
+   */
+  readonly known: readonly PersonId[];
   readonly accused: PersonId | null;
   /** Composer step id -> chosen option id. */
   readonly answers: Readonly<Record<string, string>>;
@@ -68,8 +74,9 @@ export function initialState(): GameState {
     terms: [],
     tabs: [],
     activeTab: "",
-    focus: null,
+    focus: "vale",
     view: "profile",
+    known: ["vale"],
     accused: null,
     answers: {},
     ending: null,
@@ -111,6 +118,10 @@ function words(text: string): string[] {
  * can't be reached in the reachability check either.
  */
 export function matchesQuery(source: SourceDoc, query: string): boolean {
+  // No terms means the page isn't indexed at all — invite-only servers, group
+  // chats, anything behind a login. Those are reached by following a link
+  // somebody posted, never by searching for them.
+  if (!source.terms.length) return false;
   const needles = words(query);
   if (!needles.length) return false;
   const hay = [source.title, source.url, source.blurb, ...source.terms].join(" ").toLowerCase();
@@ -174,11 +185,26 @@ export function linksFor(state: GameState, kase: CaseFile, person: PersonId): Ed
   return connections(state, kase).filter((e) => e.from === person || e.to === person);
 }
 
-/** People visible in the dossier rail for the current chapter. */
+/** People you have found. The board starts almost empty on purpose. */
 export function livePeople(state: GameState, kase: CaseFile) {
   return Object.values(kase.people)
-    .filter((p) => p.chapter <= state.chapter)
+    .filter((p) => p.chapter <= state.chapter && state.known.includes(p.id))
     .sort((a, b) => a.chapter - b.chapter || a.name.localeCompare(b.name));
+}
+
+/**
+ * Who a clue can legitimately be dropped on. A fact about one person goes on
+ * that person; a fact about a relationship is about both of them, so either
+ * end accepts it.
+ */
+export function dropTargets(_kase: CaseFile, clue: Clue): PersonId[] {
+  return clue.link ? [clue.person, clue.link.to] : [clue.person];
+}
+
+/** People a clue would put on the board if filed. */
+export function revealedBy(clue: Clue): PersonId[] {
+  if (clue.link) return [clue.person, clue.link.to];
+  return clue.reveals ? [clue.person] : [];
 }
 
 export function chapterOf(state: GameState, kase: CaseFile) {
@@ -307,7 +333,8 @@ export function fileClue(
   if (state.filed.includes(clueId)) {
     return { state, ok: false, message: "Already in the dossier." };
   }
-  if (clue.person !== person) {
+  const targets = dropTargets(kase, clue);
+  if (!targets.includes(person)) {
     const who = kase.people[person]?.name ?? "them";
     return { state, ok: false, message: `That doesn't tell you anything about ${who}.` };
   }
@@ -328,12 +355,22 @@ export function fileClue(
   const terms = [...state.terms];
   for (const term of clue.unlocks ?? []) if (!terms.includes(term)) terms.push(term);
 
-  const message = evicted
-    ? `Filed. It replaces what you had under ${clue.slot}.`
-    : "Filed.";
+  const known = [...state.known];
+  const found: string[] = [];
+  for (const id of revealedBy(clue)) {
+    if (known.includes(id) || !kase.people[id]) continue;
+    known.push(id);
+    found.push(kase.people[id]!.name);
+  }
+
+  const message = found.length
+    ? `New on the board: ${found.join(" and ")}.`
+    : evicted
+      ? `Filed — it replaces what you had under ${SLOT_LABEL[clue.slot!].toLowerCase()}.`
+      : "Filed.";
 
   return {
-    state: { ...state, filed, terms, focus: person, toast: message },
+    state: { ...state, filed, terms, known, focus: person, toast: message },
     ok: true,
     message,
   };

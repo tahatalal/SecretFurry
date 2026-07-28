@@ -25,6 +25,31 @@ export function esc(value: string): string {
 const CLUE_TOKEN = /\{\{c:([a-z0-9_]+)\|([^}]+)\}\}/gi;
 
 /**
+ * A link to another page: {{go:source_id|visible text}}.
+ *
+ * Some places aren't on the open web. You don't find a Discord server by
+ * searching for it — you find an invite link posted somewhere else and follow
+ * it. Same for group chats and anything behind a login.
+ */
+const GO_TOKEN = /\{\{go:([a-z0-9_]+)\|([^}]+)\}\}/gi;
+
+function outlink(id: string, label: string): string {
+  return (
+    `<a class="pf-link" href="#" data-act="open-source" data-source="${esc(id)}" ` +
+    `title="Open ${esc(label)}">${label}</a>`
+  );
+}
+
+/** Every page this body links to. Used by the reachability validator. */
+export function linkIdsIn(body: string): string[] {
+  const out: string[] = [];
+  for (const match of body.matchAll(/class="pf-link"[^>]*data-source="([^"]+)"/g)) {
+    out.push(match[1]!);
+  }
+  return out;
+}
+
+/**
  * Curl the quotes. The pixel body font draws a straight apostrophe as a stark
  * vertical tick that reads as a backtick at small sizes; the typographic one
  * is a proper comma shape. Applied to every rendered string so content can be
@@ -46,6 +71,7 @@ export function typo(text: string): string {
 export function rich(text: string): string {
   return esc(typo(text))
     .replace(CLUE_TOKEN, (_all, id: string, label: string) => chunk(id, label))
+    .replace(GO_TOKEN, (_all, id: string, label: string) => outlink(id, label))
     .replace(/\*([^*]+)\*/g, "<b>$1</b>")
     .replace(/\n{2,}/g, "</p><p>")
     .replace(/\n/g, "<br>");
@@ -55,6 +81,7 @@ export function rich(text: string): string {
 export function line(text: string): string {
   return esc(typo(text))
     .replace(CLUE_TOKEN, (_all, id: string, label: string) => chunk(id, label))
+    .replace(GO_TOKEN, (_all, id: string, label: string) => outlink(id, label))
     .replace(/\*([^*]+)\*/g, "<b>$1</b>");
 }
 

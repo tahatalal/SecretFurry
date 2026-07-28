@@ -157,6 +157,31 @@
   color: var(--ink-3);
 }
 
+.ct-species {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: var(--sp-2);
+}
+
+.ct-species__pick {
+  padding: 1px 8px;
+  background: var(--paper-2);
+  border: 2px solid var(--paper-edge);
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  cursor: pointer;
+}
+
+.ct-species__pick:hover {
+  border-color: var(--ink);
+}
+
+.ct-species__pick.is-on {
+  background: var(--sunbeam);
+  border-color: var(--ink);
+}
+
 .ct-swatches {
   display: flex;
   flex-wrap: wrap;
@@ -508,4 +533,40 @@
 
 .srp__term:hover {
   background: #f1f3f4;
+}
+
+/* Visited results go purple, the way they do on every real search page. */
+.srp__hit.is-seen .srp__title {
+  color: #681da8;
+}
+
+.srp__seen {
+  margin-top: 4px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #9aa0a6;
+}
+
+/* In-page links to other pages — a Discord invite on a wiki, that sort of
+   thing. Styled as a real link so it reads as somewhere to go. */
+.pf-link {
+  color: #1a0dab;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.pf-link:hover {
+  background: var(--sunbeam);
+}
+
+.fa .pf-link,
+.dc .pf-link,
+.vr .pf-link {
+  color: #7fd4ff;
+}
+
+.tg-pinned .pf-link {
+  color: #0b64a0;
 }

@@ -32,9 +32,13 @@ export type Provenance =
  * the same slot are by definition a contradiction the player has to resolve.
  */
 export type Slot =
+  | "name"
   | "handle"
   | "sona"
   | "species"
+  | "suit"
+  | "build"
+  | "ident"
   | "region"
   | "city"
   | "work"
@@ -48,9 +52,13 @@ export type Slot =
   | "contact";
 
 export const SLOT_ORDER: readonly Slot[] = [
+  "name",
   "handle",
   "sona",
   "species",
+  "suit",
+  "build",
+  "ident",
   "region",
   "city",
   "work",
@@ -65,9 +73,13 @@ export const SLOT_ORDER: readonly Slot[] = [
 ];
 
 export const SLOT_LABEL: Readonly<Record<Slot, string>> = {
+  name: "Name",
   handle: "Handle",
   sona: "Fursona",
   species: "Species",
+  suit: "Fursuit",
+  build: "Build",
+  ident: "IDs & numbers",
   region: "Region",
   city: "City",
   work: "Work",
@@ -80,6 +92,9 @@ export const SLOT_LABEL: Readonly<Record<Slot, string>> = {
   reason: "Why they hide",
   contact: "Contact",
 };
+
+/** Slots that describe a body rather than a life. Grouped in the profile. */
+export const PHYSICAL_SLOTS: readonly Slot[] = ["species", "suit", "build", "ident"];
 
 export type ClueId = string;
 export type PersonId = string;
@@ -108,6 +123,12 @@ export interface Clue {
   readonly slot?: Slot;
   /** Set instead of (or as well as) a slot to draw an edge on the web. */
   readonly link?: Link;
+  /**
+   * Filing this puts its person on the board for the first time. Nobody is
+   * visible until you find them — the cast is discovered, not handed over.
+   * Link clues reveal both of their endpoints automatically.
+   */
+  readonly reveals?: boolean;
   /** One line, shown in the dossier row. */
   readonly label: string;
   /** What you actually learned, shown when the row is expanded. */

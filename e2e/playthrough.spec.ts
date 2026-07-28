@@ -57,11 +57,14 @@ async function fileVisibleClues(page: Page): Promise<number> {
     if (!owner) break;
 
     await chunk.click();
+    // Either the owner is already on the board, or the clue opens a new
+    // profile and the rail offers an empty slot to drop it into.
     const card = page.locator(`.rail__card[data-person="${owner}"]`);
     if ((await card.count()) === 0) {
-      // Owner isn't on the board yet — leave it and stop scanning this page.
       await page.keyboard.press("Escape");
-      break;
+      // Skip past this one rather than abandoning the whole page.
+      await chunk.evaluate((el) => el.classList.add("is-filed"));
+      continue;
     }
     await card.click();
     filed += 1;
@@ -76,6 +79,29 @@ async function runSearch(page: Page, query: string): Promise<void> {
   const box = page.locator('.srp__query input[name="q"]');
   await box.fill(query);
   await box.press("Enter");
+}
+
+/**
+ * Follow one not-yet-visited in-page link. Closed platforms — invite-only
+ * servers, group chats — are only reachable this way, so a sweep that only
+ * searches would never see them.
+ */
+async function followOneLink(page: Page, opened: Set<string>): Promise<boolean> {
+  const tabs = await page.locator(".tab").count();
+  for (let i = 0; i < tabs; i += 1) {
+    await page.locator(".tab").nth(i).click();
+    const ids = await page
+      .locator(".pf-link[data-source]")
+      .evaluateAll((els) => els.map((el) => (el as HTMLElement).dataset.source ?? ""));
+    const next = ids.find((id) => id && !opened.has(id));
+    if (!next) continue;
+
+    opened.add(next);
+    await page.locator(`.pf-link[data-source="${next}"]`).first().click();
+    await fileVisibleClues(page);
+    return true;
+  }
+  return false;
 }
 
 /** Search every known lead, open every hit, and file everything found. */
@@ -111,6 +137,13 @@ async function sweep(page: Page): Promise<void> {
       }
     }
 
+    // Follow every in-page link we haven't taken yet.
+    let followed = 0;
+    for (let guard = 0; guard < 8; guard += 1) {
+      if (!(await followOneLink(page, openedSources))) break;
+      followed += 1;
+    }
+
     // Second pass over pages already open: some clues only become fileable
     // once the person they belong to has appeared on the board.
     for (const tab of await page.locator(".tab").all()) {
@@ -118,7 +151,7 @@ async function sweep(page: Page): Promise<void> {
       await fileVisibleClues(page);
     }
 
-    if (!fresh.length && !openedThisRound && round > 0) break;
+    if (!fresh.length && !openedThisRound && !followed && round > 0) break;
   }
 }
 
@@ -165,27 +198,25 @@ test("greedy playthrough reaches an ending", async ({ page }) => {
 test("filing a clue on the wrong person is refused", async ({ page }) => {
   await newGame(page);
 
-  await runSearch(page, "vale maned wolf");
+  // Get a second person onto the board first — you start knowing only Vale.
+  await runSearch(page, "fursuit parade 2024 photos");
   await page.locator(".srp__hit").first().click();
+  await page.locator('.chunk[data-clue="vale_link_sprocket"]').click();
+  await page.locator('.rail__card[data-person="vale"]').click();
+  await expect(page.locator('.rail__card[data-person="sprocket"]')).toBeVisible();
 
-  const chunk = page.locator(".chunk:not(.is-filed)").first();
-  await expect(chunk).toBeVisible();
-  const id = await chunk.getAttribute("data-clue");
-  const clues = await page.evaluate(() => window.__SF__?.clues ?? {});
-  const owner = clues[id ?? ""]?.person;
-  expect(owner).toBeTruthy();
+  // vale_con is about Vale alone, so Sprocket must refuse it.
+  await runSearch(page, "fursuit parade 2024 photos");
+  await page.locator(".srp__hit").first().click();
+  await page.locator('.chunk[data-clue="vale_con"]').click();
+  await page.locator('.rail__card[data-person="sprocket"]').click();
 
-  // Drop it on somebody it demonstrably isn't about.
-  const wrong = page.locator(`.rail__card:not([data-person="${owner}"])`).first();
-  await chunk.click();
-  await wrong.click();
   await expect(page.locator(".toast--bad")).toContainText(/doesn't tell you anything/i);
-  await expect(page.locator(".dossier__head")).toContainText("0 filed");
-
-  // Now the right one.
-  await page.locator(`.rail__card[data-person="${owner}"]`).click();
   await expect(page.locator(".dossier__head")).toContainText("1 filed");
-  await expect(page.locator(".chunk.is-filed").first()).toBeVisible();
+
+  // The clue stays in hand, so the right target still works.
+  await page.locator('.rail__card[data-person="vale"]').click();
+  await expect(page.locator(".dossier__head")).toContainText("2 filed");
 });
 
 test("contradictions evict each other in the same slot", async ({ page }) => {
