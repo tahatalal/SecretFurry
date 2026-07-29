@@ -1,9 +1,14 @@
 /* ---------------------------------------------------------------------------
    Chiptune, generated. No audio files ship with the game.
 
-   A square-wave lead over a soft triangle bass, scheduled a bar at a time so
-   the loop can change key between chapters without a gap. Everything routes
-   through one gain node, so muting is one assignment.
+   The ambience is a lullaby, not a level theme: a slow triangle melody low in
+   its register over a heartbeat bass and a two-note sine pad, everything
+   routed through a lowpass so nothing can pierce. The player stares at this
+   game for two hours — the music's whole job is to disappear.
+
+   Scheduled a bar at a time so the loop can change key between chapters
+   without a gap. Everything routes through one gain node, so muting is one
+   assignment.
 --------------------------------------------------------------------------- */
 
 type Wave = OscillatorType;
@@ -22,9 +27,16 @@ function ensure(): AudioContext | null {
   master = ctx.createGain();
   master.gain.value = muted ? 0 : 0.9;
   master.connect(ctx.destination);
+  // All music passes through a gentle lowpass — the difference between a
+  // chip lead and a dog whistle is everything above ~1.2kHz.
+  const mellow = ctx.createBiquadFilter();
+  mellow.type = "lowpass";
+  mellow.frequency.value = 1200;
+  mellow.Q.value = 0.5;
+  mellow.connect(master);
   musicBus = ctx.createGain();
   musicBus.gain.value = 0.16;
-  musicBus.connect(master);
+  musicBus.connect(mellow);
   sfxBus = ctx.createGain();
   sfxBus.gain.value = 0.5;
   sfxBus.connect(master);
@@ -57,9 +69,14 @@ interface ToneOptions {
   bus?: GainNode | null;
   /** Slide to this frequency over the note. */
   glide?: number;
+  /**
+   * Seconds to reach full volume. Effects keep the hard chip attack (8ms);
+   * music notes ease in so they land like breath instead of like a click.
+   */
+  attack?: number;
 }
 
-function tone({ freq, dur, wave = "square", gain = 0.3, at, bus, glide }: ToneOptions): void {
+function tone({ freq, dur, wave = "square", gain = 0.3, at, bus, glide, attack = 0.008 }: ToneOptions): void {
   const audio = ensure();
   if (!audio) return;
   const start = at ?? audio.currentTime;
@@ -69,9 +86,8 @@ function tone({ freq, dur, wave = "square", gain = 0.3, at, bus, glide }: ToneOp
   osc.frequency.setValueAtTime(freq, start);
   if (glide) osc.frequency.exponentialRampToValueAtTime(Math.max(20, glide), start + dur);
 
-  // Hard attack, quick decay. Anything softer stops sounding like a chip.
   env.gain.setValueAtTime(0.0001, start);
-  env.gain.exponentialRampToValueAtTime(gain, start + 0.008);
+  env.gain.exponentialRampToValueAtTime(gain, start + attack);
   env.gain.exponentialRampToValueAtTime(0.0001, start + dur);
 
   osc.connect(env);
@@ -142,29 +158,74 @@ export const sfx = {
 
 /** Chapter -> root note. Each chapter drops a little, but stays major. */
 const ROOTS = [0, 261.63, 233.08, 196.0];
-const SCALE = [0, 2, 4, 7, 9, 12, 14, 16];
+/** Major pentatonic, one octave. Nothing in it can clash, nothing climbs high. */
+const SCALE = [0, 2, 4, 7, 9, 12];
+
+/** Slow. Two-and-a-quarter seconds to a bar — a resting heart rate. */
+const BEAT = 0.56;
 
 let loopTimer: number | null = null;
 let step = 0;
 let chapterRoot = ROOTS[1]!;
 
+/** A long sine swell — the warm bed the rest of the bar lies on. */
+function pad(freq: number, dur: number, at: number, gain = 0.09): void {
+  const audio = ensure();
+  if (!audio || !musicBus) return;
+  const osc = audio.createOscillator();
+  const env = audio.createGain();
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(freq, at);
+  env.gain.setValueAtTime(0.0001, at);
+  env.gain.exponentialRampToValueAtTime(gain, at + dur * 0.35);
+  env.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+  osc.connect(env);
+  env.connect(musicBus);
+  osc.start(at);
+  osc.stop(at + dur + 0.05);
+}
+
 function scheduleBar(): void {
   const audio = ensure();
   if (!audio || !musicBus) return;
-  const beat = 0.34;
   const now = audio.currentTime + 0.05;
+  const bar = 4 * BEAT;
+
+  // The bed: root always, the fifth joining on alternating bars so the
+  // harmony breathes instead of droning.
+  pad(chapterRoot / 2, bar, now);
+  if (step % 2 === 1) pad((chapterRoot * 1.5) / 2, bar, now, 0.06);
 
   for (let i = 0; i < 4; i += 1) {
-    const at = now + i * beat;
-    // Bass: root, root, fifth, root.
-    const bassNote = i === 2 ? chapterRoot * 1.5 : chapterRoot;
-    tone({ freq: bassNote / 2, dur: beat * 0.85, wave: "triangle", gain: 0.5, at, bus: musicBus });
+    const at = now + i * BEAT;
 
-    // Lead: a wandering arpeggio that never quite repeats.
-    const degree = SCALE[(step + i * 2) % SCALE.length]!;
-    const lead = chapterRoot * Math.pow(2, degree / 12);
-    if ((step + i) % 3 !== 2) {
-      tone({ freq: lead * 2, dur: beat * 0.5, wave: "square", gain: 0.22, at, bus: musicBus });
+    // Bass on one and three — a heartbeat, not a march.
+    if (i % 2 === 0) {
+      tone({
+        freq: chapterRoot / 2,
+        dur: BEAT * 1.7,
+        wave: "triangle",
+        gain: 0.38,
+        at,
+        bus: musicBus,
+        attack: 0.03,
+      });
+    }
+
+    // The melody: a triangle wave kept low in its register (the old square
+    // lead lived an octave higher and cut like a fire alarm), wandering the
+    // pentatonic with rests — roughly two unhurried notes a bar.
+    if ((step + i) % 3 === 0) {
+      const degree = SCALE[(step * 2 + i * 3) % SCALE.length]!;
+      tone({
+        freq: chapterRoot * Math.pow(2, degree / 12),
+        dur: BEAT * 1.5,
+        wave: "triangle",
+        gain: 0.15,
+        at,
+        bus: musicBus,
+        attack: 0.05,
+      });
     }
   }
   step += 1;
@@ -176,7 +237,7 @@ export function startAmbience(chapter: number): void {
   chapterRoot = ROOTS[chapter] ?? ROOTS[1]!;
   if (loopTimer !== null) return;
   scheduleBar();
-  loopTimer = window.setInterval(scheduleBar, 4 * 340);
+  loopTimer = window.setInterval(scheduleBar, 4 * BEAT * 1000);
 }
 
 export function setChapter(chapter: number): void {
