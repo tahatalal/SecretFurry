@@ -13,6 +13,17 @@ export function titleView(canContinue: boolean): string {
     E: "#ffc93f",
   });
 
+  // Vale's tell: a wolf's head in four strokes. It draws itself in on load —
+  // the first thing the game shows you is the thing you'll spend it chasing.
+  const glyph = `
+    <svg class="title__glyph" viewBox="0 0 34 26" width="68" height="52" aria-hidden="true"
+         fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+      <path pathLength="120" style="--s:0" d="M4 20 L4 5 L11 11"/>
+      <path pathLength="120" style="--s:1" d="M23 11 L30 5 L30 20"/>
+      <path pathLength="120" style="--s:2" d="M4 20 L17 24 L30 20"/>
+      <path pathLength="120" style="--s:3" d="M13 15 L17 18 L21 15"/>
+    </svg>`;
+
   return `
     <div class="title">
       <div class="title__card">
@@ -20,6 +31,7 @@ export function titleView(canContinue: boolean): string {
           ${spriteImg(hero, { scale: 6, alt: "" })}
         </div>
         <h1 class="title__name">SECRET<br>FURRY</h1>
+        ${glyph}
         <p class="title__tag">You met them once. You never got their handle.</p>
         <div class="title__actions">
           ${

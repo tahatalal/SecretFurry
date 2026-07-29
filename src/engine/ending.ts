@@ -9,7 +9,7 @@
 --------------------------------------------------------------------------- */
 
 import { provenanceTally, type GameState } from "./state.ts";
-import type { CaseFile, EndingId } from "./types.ts";
+import type { CaseFile, Ending, EndingId } from "./types.ts";
 
 /**
  * Weight per filed clue, by where it came from.
@@ -21,8 +21,15 @@ import type { CaseFile, EndingId } from "./types.ts";
  */
 export const WEIGHT = { open: 0, crossed: 2, private: 5 } as const;
 
-/** alarm <= REUNION is the good ending; <= CAUTIOUS is the middle one. */
-export const REUNION = 6;
+/**
+ * alarm <= REUNION is the good ending; <= CAUTIOUS is the middle one.
+ *
+ * REUNION leaves room for more than one sincere message. The mandatory floor
+ * (chapter gates force some crossed clues) sits well under it, so a warm
+ * opening plus the badge ask — not only the single gentlest combination —
+ * still gets there, and one optional crossed clue doesn't end the run.
+ */
+export const REUNION = 8;
 export const CAUTIOUS = 24;
 
 export interface Verdict {
@@ -72,4 +79,23 @@ export function resolveVerdict(state: GameState, kase: CaseFile): Verdict {
   if (alarm <= REUNION) return { ending: "reunion", alarm, correct, breakdown };
   if (alarm <= CAUTIOUS) return { ending: "cautious", alarm, correct, breakdown };
   return { ending: "blocked", alarm, correct, breakdown };
+}
+
+/**
+ * Epilogue paragraphs this particular run earned. The endings remember
+ * specifics — whether you read the journal, whether you carried the lie —
+ * so two players comparing notes get genuinely different last pages.
+ */
+export function endingExtras(state: GameState, ending: Ending): string[] {
+  const filed = new Set(state.filed);
+  const seen = new Set(state.seen);
+  return (ending.variants ?? [])
+    .filter(
+      (v) =>
+        (!v.requiresFiled || filed.has(v.requiresFiled)) &&
+        (!v.missingFiled || !filed.has(v.missingFiled)) &&
+        (!v.requiresSeen || seen.has(v.requiresSeen)) &&
+        (!v.missingSeen || !seen.has(v.missingSeen)),
+    )
+    .map((v) => v.text);
 }

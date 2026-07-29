@@ -35,14 +35,27 @@ can keep: click it, then click the person it belongs to — or drag it onto them
   together don't go in a slot; they draw an edge. June Ferraro sells foam to
   everybody in this town, which makes her the seam between the half of the
   internet where Vale is a maned wolf and the half where somebody has a
-  payroll number.
+  payroll number. Drag the nodes around until the shape makes sense to you.
 - **Filing unlocks searching.** Every fact you keep gives you something new to
   look for. Reading a page does too.
+- **Closing a chapter closes the file.** Everything filed when a chapter ends
+  becomes part of the record for good. You can't un-know something on the way
+  out the door just to look better at the end.
+- **The last chapter asks for a case, not a name.** Work, art, schedule, pet —
+  filled on whoever you believe it is. The game doesn't check you picked the
+  right person until the reply comes back, and there is one candidate in this
+  town whose life rhymes with Vale's closely enough to be very sure and very
+  wrong about.
+- **The world reacts.** Accounts have been going quiet all year. Some of them
+  go quiet while you're working, and pages you've read can stop existing.
 
-At the end you write them one message. The game knows every fact you filed and
-where it came from — things they posted openly, things that crossed between
-their two lives, and things they deleted. That's what the ending is graded on,
-far more than whether you were right.
+At the end you write them one message — or you close the laptop, delete the
+draft, and never find out. If you send it, the game knows every fact you filed
+and where it came from — things they posted openly, things that crossed
+between their two lives, and things they deleted. That's what the ending is
+graded on, far more than whether you were right. It also knows what you chose
+not to say: lines that lean on the deleted journal are only offered to players
+who actually read it.
 
 ## Structure
 

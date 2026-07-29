@@ -395,7 +395,24 @@
 .cm-foot {
   margin-top: var(--sp-6);
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+
+/* A blunt hint at how a line will land — color, not numbers. */
+.cm-option[data-tone="warm"]:hover {
+  border-left: 6px solid var(--meadow);
+  padding-left: calc(var(--sp-3) - 4px);
+}
+
+.cm-option[data-tone="even"]:hover {
+  border-left: 6px solid var(--sunbeam-d);
+  padding-left: calc(var(--sp-3) - 4px);
+}
+
+.cm-option[data-tone="sharp"]:hover {
+  border-left: 6px solid var(--berry);
+  padding-left: calc(var(--sp-3) - 4px);
 }
 
 /* --- ending --------------------------------------------------------------- */
@@ -419,12 +436,22 @@
   background: linear-gradient(180deg, #ded8e8, #cfc7dc);
 }
 
+/* Walking away: dusk colors. Not a victory, not a wound. */
+.ending--away {
+  background: linear-gradient(180deg, #e3e8f2, #f3e9e2);
+}
+
+/* Sized so the prose fills the card instead of leaving a dead right column. */
 .ending__card {
-  width: min(760px, 100%);
+  width: min(680px, 100%);
   padding: var(--sp-6);
   background: var(--paper);
   border: var(--border) solid var(--ink);
   box-shadow: 10px 10px 0 0 rgb(43 36 56 / 0.35);
+}
+
+.ending__card .prose {
+  max-width: none;
 }
 
 .ending__head {
@@ -569,4 +596,204 @@
 
 .tg-pinned .pf-link {
   color: #0b64a0;
+}
+
+/* --- the search beat ------------------------------------------------------- */
+
+.srp__wait {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-6) 0;
+  color: #70757a;
+  font-size: 14px;
+}
+
+.srp__waitdots {
+  display: inline-flex;
+  gap: 5px;
+  color: #1a73e8;
+}
+
+/* A lead with nothing new behind it stops shouting but stays clickable. */
+.srp__term.is-spent {
+  color: #9aa0a6;
+  border-color: #e8eaed;
+  background: #fafafa;
+}
+
+/* --- dead pages ------------------------------------------------------------ */
+
+.tombstone {
+  gap: var(--sp-3);
+  text-align: center;
+}
+
+.tombstone .prose {
+  max-width: 46ch;
+  color: var(--ink-2);
+}
+
+.tombstone__note {
+  font-size: var(--fs-sm);
+  color: var(--ink-3);
+}
+
+/* --- the record ------------------------------------------------------------ */
+
+.slot__lock {
+  align-self: start;
+  font-size: 8px;
+  color: var(--ink-4);
+  padding: 2px 4px;
+  cursor: help;
+}
+
+/* --- blocked ending: the reply that doesn't come --------------------------- */
+
+.dm-timeline {
+  display: grid;
+  gap: var(--sp-3);
+  padding: var(--sp-2) 0;
+}
+
+.dm-line {
+  font-family: var(--font-ui);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+}
+
+.dm-line--none {
+  color: var(--ink-4);
+  font-style: italic;
+}
+
+.dm-bubble {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  width: max-content;
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--paper-3);
+  border: 2px solid var(--paper-edge);
+  color: var(--ink-3);
+}
+
+/* --- the title glyph ------------------------------------------------------- */
+
+.title__glyph {
+  color: var(--ink-2);
+  margin-top: calc(-1 * var(--sp-2));
+}
+
+/* --- the notebook as a case log -------------------------------------------- */
+
+.casebook__goal {
+  padding: var(--sp-3);
+  margin-bottom: var(--sp-3);
+  background: var(--paper-2);
+  border-left: var(--shadow-drop) solid var(--tangerine);
+}
+
+.casebook__goal p {
+  margin: var(--sp-1) 0 var(--sp-2);
+  font-size: var(--fs-md);
+}
+
+.casebook__legend {
+  display: flex;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-3);
+  font-size: var(--fs-xs);
+  color: var(--ink-3);
+}
+
+.casebook__legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+}
+
+.casebook {
+  max-height: 44vh;
+  padding-right: var(--sp-2);
+}
+
+.casebook__group {
+  margin-bottom: var(--sp-4);
+}
+
+.casebook__who {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding-bottom: var(--sp-1);
+  border-bottom: 2px solid var(--paper-edge);
+  font-family: var(--font-ui);
+  font-size: var(--fs-xs);
+}
+
+.casebook__rows {
+  list-style: none;
+  margin: var(--sp-2) 0 0;
+  padding: 0;
+}
+
+.casebook__row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  padding: 3px 0;
+  font-size: var(--fs-sm);
+}
+
+.casebook__row.is-suspect .casebook__label {
+  text-decoration: line-through;
+  color: var(--ink-4);
+}
+
+.casebook__dot {
+  flex: none;
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--ink);
+  transform: translateY(-1px);
+}
+
+.casebook__dot--open {
+  background: var(--prov-open);
+}
+
+.casebook__dot--crossed {
+  background: var(--prov-crossed);
+}
+
+.casebook__dot--private {
+  background: var(--prov-private);
+}
+
+.casebook__label {
+  min-width: 0;
+}
+
+.casebook__src {
+  flex: none;
+  margin-left: auto;
+  padding: 0 var(--sp-1);
+  background: none;
+  border: none;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--cobalt-d);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.casebook__src:hover {
+  color: var(--cobalt);
 }

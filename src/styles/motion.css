@@ -5,6 +5,13 @@
    reads as blur. Everything here is short and low-amplitude — the game should
    feel awake, not busy. All of it collapses under prefers-reduced-motion via
    the zeroed duration tokens, plus the belt-and-braces block at the bottom.
+
+   Entrance animations are scoped to `.enter-*` classes the controller puts on
+   the root only when the thing actually entered: `.enter-phase` on a phase
+   change, `.enter-sheet` when a sheet opens, `.enter-toast` when a toast
+   appears. Re-render is whole-view, so without that scoping every click would
+   replay the rise on the entire screen — the compose page used to blink every
+   time you picked a line.
 --------------------------------------------------------------------------- */
 
 @keyframes rise {
@@ -82,21 +89,103 @@
   }
 }
 
-/* --- where they're used --------------------------------------------------- */
+/* The old value getting knocked out of a slot by the new one. */
+@keyframes jolt {
+  0% {
+    transform: translateX(0);
+  }
+  30% {
+    transform: translateX(-4px);
+  }
+  60% {
+    transform: translateX(3px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
 
-.title__card,
-.ct,
-.cm,
-.ending__card {
+/* A hard cut softened by one breath of ink — the between-scenes wipe. */
+@keyframes wipeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Typing-indicator dots (and the search spinner, which borrows them). */
+@keyframes dotPulse {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+
+/* The dots go quiet. The bubble stays. This is the bad part. */
+@keyframes goStill {
+  to {
+    opacity: 0.45;
+  }
+}
+
+/* The title screen's spare dot layer drifts very slowly under everything. */
+@keyframes drift {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 48px 96px;
+  }
+}
+
+/* --- entrances (scoped: they play once, when the thing arrives) ----------- */
+
+.enter-phase .title__card,
+.enter-phase .ct,
+.enter-phase .cm,
+.enter-phase .ending__card {
   animation: rise var(--t-slow) var(--ease-step) both;
 }
 
-.sheet__card {
+.enter-sheet .sheet__card {
   animation: popIn var(--t-med) var(--ease-step) both;
 }
 
-.toast {
+.enter-toast .toast {
   animation: nudge var(--t-slow) var(--ease-step) both;
+}
+
+/* Paragraphs that arrive a beat apart — ending replies and epilogues. */
+.enter-phase .reveal {
+  animation: rise var(--t-slow) var(--ease-step) both;
+  animation-delay: var(--d, 0s);
+}
+
+/* The between-phase wipe: one frame of ink, stepped out. */
+.enter-phase::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    repeating-linear-gradient(0deg, rgb(43 36 56 / 0.9) 0 2px, rgb(43 36 56 / 0.75) 2px 4px);
+  animation: wipeOut 280ms steps(5, end) both;
+}
+
+/* The four-stroke wolf glyph draws itself in, one stroke at a time. */
+.enter-phase .title__glyph path {
+  stroke-dasharray: 120;
+  animation: drawIn 420ms steps(8, end) both;
+  animation-delay: calc(0.35s + var(--s) * 0.22s);
 }
 
 /*
@@ -107,6 +196,10 @@
  */
 .slot.is-new {
   animation: flashFiled var(--t-slow) var(--ease-step) both;
+}
+
+.slot.is-jolted {
+  animation: jolt 280ms var(--ease-step) both;
 }
 
 .rail__card.is-new,
@@ -120,11 +213,86 @@
   animation: drawIn var(--t-slow) var(--ease-step) both;
 }
 
-/* The title screen's hero blinks once every few seconds. Nothing else on the
-   page moves, which is what makes it read as alive rather than as an effect. */
+/* The title screen's hero blinks once every few seconds, and the backdrop
+   drifts too slowly to notice unless you stop to look. Nothing else moves,
+   which is what makes it read as alive rather than as an effect. */
 .title__art img {
   animation: blink 5.5s steps(1, end) infinite;
 }
+
+.title::before {
+  content: "";
+  position: fixed;
+  inset: -96px;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(var(--bg-dots) 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.55;
+  animation: drift 40s linear infinite;
+}
+
+/* The clue label in transit from page to dossier. Driven by WAAPI in app.ts. */
+.fly {
+  position: fixed;
+  z-index: 65;
+  max-width: 260px;
+  padding: var(--sp-1) var(--sp-2);
+  background: var(--sunbeam);
+  border: 2px solid var(--ink);
+  box-shadow: 3px 3px 0 0 rgb(43 36 56 / 0.3);
+  font-family: var(--font-ui);
+  font-size: var(--fs-xs);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+
+/* Typing dots — the blocked ending's indicator and the search spinner. */
+.dm-bubble i,
+.srp__waitdots i {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 0;
+  background: currentColor;
+  animation: dotPulse 0.8s steps(4, end) infinite;
+}
+
+.dm-bubble i:nth-child(2),
+.srp__waitdots i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.dm-bubble i:nth-child(3),
+.srp__waitdots i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+/* Each typing bubble runs for a while, then the dots stop dead. */
+.enter-phase .dm-bubble {
+  animation:
+    rise var(--t-med) var(--ease-step) both,
+    goStill 400ms steps(2, end) both;
+  animation-delay: var(--d, 0s), calc(var(--d, 0s) + 2.1s);
+}
+
+.enter-phase .dm-bubble i {
+  /* Finite: the dots pulse, and then they don't, and that's the message. */
+  animation-iteration-count: 3;
+  animation-delay: var(--d, 0s);
+}
+
+.enter-phase .dm-bubble i:nth-child(2) {
+  animation-delay: calc(var(--d, 0s) + 0.15s);
+}
+
+.enter-phase .dm-bubble i:nth-child(3) {
+  animation-delay: calc(var(--d, 0s) + 0.3s);
+}
+
+/* --- hovers ---------------------------------------------------------------- */
 
 .srp__hit {
   transition: transform var(--t-fast) var(--ease-step);
@@ -148,6 +316,11 @@
 
 .tab {
   transition: background var(--t-fast) var(--ease-step);
+}
+
+.web__node.is-dragging {
+  z-index: 5;
+  transition: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

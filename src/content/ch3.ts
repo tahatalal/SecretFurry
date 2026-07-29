@@ -8,18 +8,26 @@
 --------------------------------------------------------------------------- */
 
 import type { Chapter, Clue, SourceDoc } from "../engine/types.ts";
+import { CAST } from "./people.ts";
+import { bskyThread } from "../platforms/bluesky.ts";
 import { blogPost, facebookPost, instagramProfile, linkedinProfile, mapsPlace, youtubeVideo } from "../platforms/civilian.ts";
 
 export const CH3: Chapter = {
   id: 3,
   name: "Person",
-  goal: "Nine people. One of them signs things with a wolf's head. Work out which.",
+  goal: "Nine people. Build the case — work, art, schedule, pet — on the one who lines up.",
   startTerms: [
     "kishwaukee middle school staff",
     "rockford school district calendar",
     "rockford veterinary reviews",
   ],
-  keyClues: ["m_work", "m_art", "m_pet", "m_hand", "m_schedule"],
+  /*
+   * No named key clues. The gate is a case: those four slots filled on a real
+   * person — any real person. The game doesn't check you picked the right one
+   * until the reply comes back, which is the only honest place to check.
+   */
+  keyClues: [],
+  keySlots: ["work", "art", "schedule", "pet"],
   opening: `
 Here is the part nobody warns you about.
 
@@ -32,15 +40,15 @@ Every single one of these is a fact Vale spent two years making sure could not b
 The game will remember that you did.
 `,
   closing: `
-A splinted right hand, the week of November the twelfth, in a corridor full of people going the wrong way.
+A job. A schedule. A way of making things. A cat.
 
-A cat with one eye called Mackerel, in a five-star review of a vet clinic on North Main, signed with two initials.
+You have held the fandom half of the internet against the legal half and found a seam that matches — a person whose weekday afternoons line up with a maned wolf's silences, fact by fact, out of things nobody ever meant for you to hold side by side.
 
-An art teacher who builds shapes out of colour with no outline and puts the light behind everything, who ran a mural on 7th Street and would not stand in front of it for a photograph, whose contract hours are 7:40 to 3:20 and whose institute days line up, to the day, with the only weekday afternoons Vale has ever been free.
+Maybe the seam. Maybe a seam. Coincidence dresses up as evidence when you have wanted something for eight months, and there are nine people in this town whose lives rhyme with each other more than any of them know.
 
-That's not a guess anymore. That's a person, and you have their name, and you have it because you went and got it.
+Either way, there is a name at the top of your file, and you are the one who put it there.
 
-Now you have to decide what kind of person that makes you — and you have to do it in one message, because that's all you're going to get.
+Now you have to decide what to do with it — in one message, because that is all you're going to get.
 `,
 };
 
@@ -106,6 +114,64 @@ export const CH3_CLUES: readonly Clue[] = [
       "Nobody was cruel. Nobody had a meeting. Somebody still does the howl when she walks into the break room, two years on.",
     provenance: "private",
     source: "school_artblog",
+  },
+
+  /* --- the trap ------------------------------------------------------------
+     Priya is the case you can build in an afternoon. Works with animals, off
+     by three, makes creatures with her hands for money — every bit of it true
+     except the one that matters, and the disproof sits one page deeper than
+     the coincidence. If you stop checking when it starts to fit, you end up
+     very sure and very wrong. --------------------------------------------- */
+  {
+    id: "priya_work",
+    person: "priya",
+    slot: "work",
+    label: "Vet tech at North Main Animal Hospital",
+    detail:
+      "Eight years at the same clinic — the clinic the Mackerel review was posted to. She'd have been in the building.",
+    provenance: "open",
+    source: "priya_instagram",
+  },
+  {
+    id: "priya_schedule",
+    person: "priya",
+    slot: "schedule",
+    label: "Four tens, Tuesday–Friday — out by three",
+    detail:
+      "Weekday shifts that end mid-afternoon. It brackets Vale's silent window almost perfectly, as long as you don't look too hard at the Mondays.",
+    provenance: "open",
+    source: "priya_instagram",
+  },
+  {
+    id: "priya_craft",
+    person: "priya",
+    slot: "art",
+    label: "Hand-sewn plush commissions",
+    detail:
+      "A commission queue, a craft-fair table every autumn, and two hundred and forty stitches with not one of them crooked. Somebody who makes animals with her hands, for money.",
+    provenance: "open",
+    source: "priya_instagram",
+  },
+  {
+    id: "priya_pet_trap",
+    person: "priya",
+    slot: "pet",
+    label: "Dotes on the clinic's one-eyed cat",
+    detail:
+      "A reviewer mentions the clinic's one-eyed tabby and the tech who carries her around the back rooms. One-eyed cat, works with animals — it clicks together so cleanly it's hard to hear anything else.",
+    provenance: "open",
+    source: "vet_reviews",
+    untrue: true,
+  },
+  {
+    id: "priya_pet_real",
+    person: "priya",
+    slot: "pet",
+    label: "Her cats are Dosa, Peanut and Mo — all two-eyed",
+    detail:
+      "Three cats at home, all present, all fully sighted, all extensively photographed. Whoever Mackerel rules a two-bedroom apartment with, it isn't Priya.",
+    provenance: "open",
+    source: "priya_instagram",
   },
 
   /* --- eliminations ------------------------------------------------------- */
@@ -367,6 +433,13 @@ Mackerel is seven now and rules a two-bedroom apartment with total authority. Th
           text: `I work in this field and I still bring my own three here, which should tell you everything. Ask for Dr. Amari.`,
         },
         {
+          by: "Gale H.",
+          stars: 5,
+          when: "3 months ago",
+          local: "Local Guide · 203 reviews",
+          text: `Shoutout to the front desk cat, a one-eyed tabby who audits every single person who walks in. {{c:priya_pet_trap|One of the techs clearly adores her — carries her through the back rooms, does her eye drops, calls her "my supervisor"}}. Ten out of ten, would be judged by that cat again.`,
+        },
+        {
           by: "Tom Beaudry",
           stars: 4,
           when: "2 years ago",
@@ -379,6 +452,122 @@ Mackerel is seven now and rules a two-bedroom apartment with total authority. Th
           when: "3 years ago",
           local: "6 reviews",
           text: `They stayed open late for us when our old dog was going. I won't forget it.`,
+        },
+      ],
+    }).body,
+  },
+
+  {
+    id: "vale_gone_thread",
+    platform: "bluesky",
+    url: "bsky.app/profile/bramblebadger.bsky.social/post/3kquiet",
+    title: "has anyone heard from vale — Bluesky",
+    blurb:
+      "their bsky is gone as of this week. not deactivated-and-back gone. gone gone.",
+    chapter: 3,
+    // The world reacting: this thread only exists once Vale's account has gone
+    // dark, which happens when you start filing the legal half of the case.
+    requires: ["m_work"],
+    terms: ["vale maned wolf", "valemaned", "has anyone heard from vale"],
+    body: bskyThread({
+      root: {
+        author: CAST.bramble,
+        handle: "bramblebadger",
+        time: "2d",
+        text: `has anyone heard from vale. not urgent. asking for me.
+
+their bsky is gone as of this week. not deactivated-and-back gone, I've watched them do that twice. gone gone. the handle doesn't resolve.`,
+        replies: 9,
+        reposts: 2,
+        likes: 41,
+      },
+      replies: [
+        {
+          author: CAST.sprocket,
+          handle: "sprocketproto",
+          time: "2d",
+          replyTo: "bramblebadger",
+          text: `wait WHAT. the badge queue post was still up like a month ago. I checked because I check`,
+          likes: 6,
+        },
+        {
+          author: CAST.poplar,
+          handle: "poplardoe",
+          time: "2d",
+          replyTo: "bramblebadger",
+          text: `leave it. I mean that kindly and I also mean it. if somebody wants to be gone they're allowed to be gone.`,
+          likes: 28,
+        },
+        {
+          author: CAST.bramble,
+          handle: "bramblebadger",
+          time: "1d",
+          replyTo: "poplardoe",
+          text: `I know. I'm not going to go looking. it's just that people were sniffing at that mural thread a while back — the signature, the whole business — and now this, and I keep doing the math on the timing and not liking the answer.`,
+          likes: 15,
+        },
+        {
+          author: CAST.poplar,
+          handle: "poplardoe",
+          time: "1d",
+          replyTo: "bramblebadger",
+          text: `the timing is a coincidence. accounts have been going for a year. you know that better than anyone, you kept the list.`,
+          likes: 11,
+        },
+        {
+          author: CAST.tessellate,
+          handle: "tessdad",
+          time: "1d",
+          replyTo: "bramblebadger",
+          text: `for whatever it's worth the ko-fi is still up. they said once that's the last one they'd close. as long as that's standing I'm not worrying.`,
+          likes: 19,
+        },
+      ],
+    }).body,
+  },
+
+  {
+    id: "priya_instagram",
+    platform: "instagram",
+    url: "instagram.com/priya.makes.things",
+    title: "Priya Raman (@priya.makes.things) • Instagram",
+    blurb:
+      "vet tech · plush commissions, occasionally · three cats, zero apologies · Rockford IL",
+    chapter: 3,
+    terms: ["priya raman", "priya rockford plush", "priya makes things"],
+    body: instagramProfile({
+      handle: "priya.makes.things",
+      name: "Priya Raman",
+      posts: 618,
+      followers: 1200,
+      following: 344,
+      bio: `{{c:priya_work|vet tech, north main animal hospital. eight years, same building, same coffee order}}
+plush commissions when the queue is open. the queue is not open
+rockford il`,
+      grid: [
+        {
+          alt: "Three cats arranged on a sunny windowsill in a tidy apartment: a large tabby, a small black cat, and an orange cat mid-yawn.",
+          caption: `{{c:priya_pet_real|household census: Dosa, Peanut, and Mo. all present. all fully sighted. all furious that the census interrupted second breakfast}}`,
+        },
+        {
+          alt: "A hand-sewn plush red fox sitting on a cutting mat, beside a spool of thread and a thimble.",
+          caption: `{{c:priya_craft|commission finished: one small fox, two hundred and forty stitches, every one of them by hand because the machine and I are not currently speaking}}. the queue is closed. I see you typing. I love you. it's closed`,
+        },
+        {
+          alt: "A phone photo of a hospital break room, a lunchbox, and a wall clock reading ten past three.",
+          caption: `{{c:priya_schedule|four tens, tuesday through friday, out the door by three}} — which everyone hears as "free time" and actually means I am asleep by nine like a farm animal`,
+        },
+        {
+          alt: "A folding table at an autumn craft fair, laid out with a dozen small hand-sewn plush animals under a string of paper leaves.",
+          caption: `fair season. everything on this table took longer than you think and cost less than it should. yes the badger has a tiny scarf. no the scarf is not sold separately`,
+        },
+        {
+          alt: "A close-up of insulin syringes organized in a labeled drawer, photographed with visible pride.",
+          caption: `reorganized the med drawer during a quiet hour and honestly it belongs in a museum. this is the content you follow me for`,
+        },
+        {
+          alt: "A quilted pot holder next to a slightly burned casserole dish.",
+          caption: `nadia made the pot holder. I made the casserole. one of us is good at things`,
         },
       ],
     }).body,

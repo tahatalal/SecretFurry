@@ -13,6 +13,7 @@ import type {
   ChapterId,
   Clue,
   ClueId,
+  ComposerOption,
   PersonId,
   Provenance,
   Slot,
@@ -39,7 +40,13 @@ export interface GameState {
   readonly sona: Fursona;
   /** Clue ids the player has committed to a dossier, in filing order. */
   readonly filed: readonly ClueId[];
-  /** Clue ids the player has laid eyes on, so re-reads don't re-highlight. */
+  /**
+   * Clue ids locked into the record. Everything filed when a chapter closes
+   * becomes part of the case for good — you can't un-know something on the
+   * way out the door just to look better at the end.
+   */
+  readonly committed: readonly ClueId[];
+  /** Source ids the player has laid eyes on, so re-reads don't re-highlight. */
   readonly seen: readonly SourceId[];
   readonly terms: readonly string[];
   readonly tabs: readonly Tab[];
@@ -53,6 +60,8 @@ export interface GameState {
    */
   readonly known: readonly PersonId[];
   readonly accused: PersonId | null;
+  /** Where the player has dragged web nodes to, as [x%, y%] on the canvas. */
+  readonly webPos: Readonly<Record<PersonId, readonly [number, number]>>;
   /** Composer step id -> chosen option id. */
   readonly answers: Readonly<Record<string, string>>;
   readonly ending: string | null;
@@ -70,6 +79,7 @@ export function initialState(): GameState {
     chapter: 1,
     sona: DEFAULT_FURSONA,
     filed: [],
+    committed: [],
     seen: [],
     terms: [],
     tabs: [],
@@ -78,6 +88,7 @@ export function initialState(): GameState {
     view: "profile",
     known: ["vale"],
     accused: null,
+    webPos: {},
     answers: {},
     ending: null,
     muted: false,
@@ -87,13 +98,23 @@ export function initialState(): GameState {
 
 /* --- selectors ------------------------------------------------------------ */
 
-/** Sources that exist right now: right chapter, and prerequisites filed. */
+/**
+ * The world reacting: a page whose `until` clue has been filed is gone. It
+ * stops turning up in search, and an open tab shows a tombstone instead.
+ */
+export function isGone(state: GameState, doc: SourceDoc): boolean {
+  if (!doc.until?.length) return false;
+  return doc.until.some((id) => state.filed.includes(id));
+}
+
+/** Sources that exist right now: right chapter, prerequisites filed, not dead. */
 export function liveSources(state: GameState, kase: CaseFile): SourceDoc[] {
   const filed = new Set(state.filed);
   return kase.sources.filter(
     (source) =>
       source.chapter <= state.chapter &&
-      (source.requires ?? []).every((id) => filed.has(id)),
+      (source.requires ?? []).every((id) => filed.has(id)) &&
+      !isGone(state, source),
   );
 }
 
@@ -211,9 +232,31 @@ export function chapterOf(state: GameState, kase: CaseFile) {
   return kase.chapters.find((c) => c.id === state.chapter) ?? kase.chapters[0]!;
 }
 
+/**
+ * A key slot is satisfied when it's filled on any candidate — any real person,
+ * not a sona. The gate is "have a case", not "have the right case": you can
+ * finish a chapter with a confident wrong answer, and find out in the reply.
+ */
+function slotSatisfied(state: GameState, kase: CaseFile, slot: Slot): boolean {
+  return state.filed.some((id) => {
+    const clue = kase.clues[id];
+    return clue?.slot === slot && kase.people[clue.person] && !kase.people[clue.person]!.isSona;
+  });
+}
+
 export function chapterComplete(state: GameState, kase: CaseFile): boolean {
+  const { done, total } = keyProgress(state, kase);
+  return done === total;
+}
+
+/** Progress toward the chapter gate, counting key clues and key slots alike. */
+export function keyProgress(state: GameState, kase: CaseFile): { done: number; total: number } {
+  const chapter = chapterOf(state, kase);
   const filed = new Set(state.filed);
-  return chapterOf(state, kase).keyClues.every((id) => filed.has(id));
+  const clueDone = chapter.keyClues.filter((id) => filed.has(id)).length;
+  const slots = chapter.keySlots ?? [];
+  const slotDone = slots.filter((slot) => slotSatisfied(state, kase, slot)).length;
+  return { done: clueDone + slotDone, total: chapter.keyClues.length + slots.length };
 }
 
 /** How the player got what they know. Drives the ending. */
@@ -355,9 +398,13 @@ export function fileClue(
   const terms = [...state.terms];
   for (const term of clue.unlocks ?? []) if (!terms.includes(term)) terms.push(term);
 
+  // Filing a fact about somebody is finding them. The `reveals` flag still
+  // matters for authoring intent, but the board must never hold a fact about
+  // a person it refuses to show.
   const known = [...state.known];
   const found: string[] = [];
-  for (const id of revealedBy(clue)) {
+  const met = [clue.person, ...(clue.link ? [clue.link.to] : []), ...revealedBy(clue)];
+  for (const id of met) {
     if (known.includes(id) || !kase.people[id]) continue;
     known.push(id);
     found.push(kase.people[id]!.name);
@@ -377,18 +424,48 @@ export function fileClue(
 }
 
 export function unfileClue(state: GameState, clueId: ClueId): GameState {
+  // Once a chapter has closed over a clue, it's evidence, not a draft. The
+  // ending grades what you knew, and you knew this.
+  if (state.committed.includes(clueId)) {
+    return { ...state, toast: "That's in the record now. It doesn't come back out." };
+  }
   return { ...state, filed: state.filed.filter((id) => id !== clueId), toast: null };
 }
 
+/** Everything filed at a chapter boundary becomes permanent. */
+function commitFiled(state: GameState): readonly ClueId[] {
+  const committed = new Set(state.committed);
+  for (const id of state.filed) committed.add(id);
+  return [...committed];
+}
+
 export function advanceChapter(state: GameState, kase: CaseFile): GameState {
-  if (state.chapter >= 3) return { ...state, phase: "compose", toast: null };
+  const committed = commitFiled(state);
+  if (state.chapter >= 3) return { ...state, committed, phase: "compose", toast: null };
   const next = (state.chapter + 1) as ChapterId;
   const chapter = kase.chapters.find((c) => c.id === next);
   const terms = [...state.terms];
   for (const term of chapter?.startTerms ?? []) {
     if (!terms.includes(term)) terms.push(term);
   }
-  return { ...state, chapter: next, terms, tabs: [], activeTab: "", toast: null };
+  return { ...state, committed, chapter: next, terms, tabs: [], activeTab: "", toast: null };
+}
+
+/** Pin a dragged web node where the player left it. */
+export function placeNode(
+  state: GameState,
+  person: PersonId,
+  pos: readonly [number, number],
+): GameState {
+  return { ...state, webPos: { ...state.webPos, [person]: pos } };
+}
+
+/** Whether a composer option is on the table for this run. */
+export function optionAvailable(state: GameState, option: ComposerOption): boolean {
+  return (
+    (option.requiresFiled ?? []).every((id) => state.filed.includes(id)) &&
+    (option.requiresSeen ?? []).every((id) => state.seen.includes(id))
+  );
 }
 
 export function setToast(state: GameState, toast: string | null): GameState {

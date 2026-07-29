@@ -302,6 +302,11 @@ The largest for the immediate region is the Midwest Furs group chat, at {{go:mid
       "maned wolf. badges + refs. comms closed indefinitely, sorry. PNW. be nice to each other.",
     chapter: 1,
     terms: ["vale maned wolf", "valemaned", "vale bluesky", "vale badges"],
+    // The world reacts. The moment you start filing facts from the legal half
+    // of Marisol's life, Vale's last public account quietly goes dark — one
+    // more in a line of accounts that have been going quiet all year. The
+    // timing is a coincidence. It will not feel like one.
+    until: ["m_work", "m_art", "m_schedule", "m_pet", "m_hand"],
     unlocks: ["valethemaned fur affinity"],
     body: bskyProfile({
       sona: VALE,

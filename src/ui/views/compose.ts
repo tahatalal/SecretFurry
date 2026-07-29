@@ -2,9 +2,16 @@ import { fursonaUrl } from "../../art/fursona.ts";
 import { esc as escRaw, typo } from "../../platforms/kit.ts";
 
 const esc = (value: string): string => escRaw(typo(value));
-import { livePeople, provenanceTally, type GameState } from "../../engine/state.ts";
+import { livePeople, optionAvailable, provenanceTally, type GameState } from "../../engine/state.ts";
 import { resolveVerdict } from "../../engine/ending.ts";
-import type { CaseFile } from "../../engine/types.ts";
+import type { CaseFile, ComposerOption } from "../../engine/types.ts";
+
+/** A blunt hint at how a line will land, without showing the number. */
+function tone(option: ComposerOption): string {
+  if (option.alarm < 0) return "warm";
+  if (option.alarm <= 2) return "even";
+  return "sharp";
+}
 
 export function composeView(state: GameState, kase: CaseFile): string {
   // You accuse a person, not a sona — Vale and the fandom cast are off the list.
@@ -26,16 +33,20 @@ export function composeView(state: GameState, kase: CaseFile): string {
     )
     .join("");
 
+  // You can only say what this run actually gave you. An option that leans on
+  // the deleted journal isn't offered to someone who never found it.
   const steps = kase.composer
     .map(
       (step) => `
       <fieldset class="cm-step">
         <legend>${esc(step.prompt)}</legend>
         ${step.options
+          .filter((o) => optionAvailable(state, o))
           .map(
             (o) => `
           <button type="button" class="cm-option${state.answers[step.id] === o.id ? " is-on" : ""}"
-                  data-act="compose-pick" data-step="${esc(step.id)}" data-option="${esc(o.id)}">
+                  data-act="compose-pick" data-step="${esc(step.id)}" data-option="${esc(o.id)}"
+                  data-tone="${tone(o)}">
             ${esc(o.text)}
           </button>`,
           )
@@ -103,6 +114,10 @@ export function composeView(state: GameState, kase: CaseFile): string {
       </section>
 
       <footer class="cm-foot">
+        <button class="px-btn" data-act="walk-away"
+                title="Delete the draft. Never find out.">
+          Close the laptop
+        </button>
         <button class="px-btn px-btn--primary" data-act="send"
                 data-ending="${verdict.ending}"
                 ${state.accused && answered ? "" : "disabled"}>

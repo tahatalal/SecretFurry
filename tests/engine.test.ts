@@ -8,16 +8,19 @@ import {
   dossier,
   fileClue,
   initialState,
+  isGone,
+  keyProgress,
   liveSources,
   matchesQuery,
   openSearch,
   openSource,
+  optionAvailable,
   provenanceTally,
   search,
   unfileClue,
   type GameState,
 } from "../src/engine/state.ts";
-import { resolveVerdict, targetId } from "../src/engine/ending.ts";
+import { endingExtras, resolveVerdict, targetId } from "../src/engine/ending.ts";
 
 function playing(): GameState {
   return { ...initialState(), phase: "play", terms: [...CASE.chapters[0]!.startTerms] };
@@ -189,5 +192,104 @@ describe("the ending", () => {
     const tally = provenanceTally(kindest(), CASE);
     expect(tally.open).toBeGreaterThan(0);
     expect(tally.private).toBe(0);
+  });
+});
+
+describe("the record", () => {
+  it("locks filed clues when a chapter closes", () => {
+    let state = file(playing(), "vale_sona");
+    state = advanceChapter(state, CASE);
+    expect(state.committed).toContain("vale_sona");
+
+    const after = unfileClue(state, "vale_sona");
+    expect(after.filed).toContain("vale_sona");
+    expect(after.toast).toMatch(/record/i);
+  });
+
+  it("still allows unfiling clues from the open chapter", () => {
+    let state = advanceChapter(playing(), CASE);
+    state = file(state, "vale_link_bramble");
+    const after = unfileClue(state, "vale_link_bramble");
+    expect(after.filed).not.toContain("vale_link_bramble");
+  });
+});
+
+describe("key slots", () => {
+  it("chapter three completes on a case, not a name", () => {
+    let state: GameState = { ...playing(), chapter: 3 };
+    expect(chapterComplete(state, CASE)).toBe(false);
+
+    // The wrong case counts too — that's the point of the trap.
+    for (const id of ["priya_work", "priya_craft", "priya_schedule", "priya_pet_trap"]) {
+      state = file(state, id);
+    }
+    expect(chapterComplete(state, CASE)).toBe(true);
+  });
+
+  it("facts about a sona do not fill key slots", () => {
+    let state: GameState = { ...playing(), chapter: 3 };
+    for (const id of ["vale_hours", "vale_art"]) state = file(state, id);
+    const { done } = keyProgress(state, CASE);
+    expect(done).toBe(0);
+  });
+
+  it("filing a fact about somebody puts them on the board", () => {
+    const state = file({ ...playing(), chapter: 3 }, "m_work");
+    expect(state.known).toContain("marisol");
+  });
+});
+
+describe("the world reacting", () => {
+  it("takes a page down once its trigger is filed", () => {
+    const bsky = CASE.sources.find((s) => s.id === "vale_bsky")!;
+    let state: GameState = { ...playing(), chapter: 3 };
+    expect(isGone(state, bsky)).toBe(false);
+
+    state = file(state, "m_work");
+    expect(isGone(state, bsky)).toBe(true);
+    expect(liveSources(state, CASE).map((s) => s.id)).not.toContain("vale_bsky");
+  });
+
+  it("surfaces the reaction thread only after the trigger", () => {
+    let state: GameState = { ...playing(), chapter: 3 };
+    expect(liveSources(state, CASE).map((s) => s.id)).not.toContain("vale_gone_thread");
+    state = file(state, "m_work");
+    expect(liveSources(state, CASE).map((s) => s.id)).toContain("vale_gone_thread");
+  });
+});
+
+describe("the composer", () => {
+  it("hides options that lean on things this run never found", () => {
+    const gated = CASE.composer
+      .flatMap((s) => s.options)
+      .find((o) => o.requiresSeen?.includes("vale_wayback"))!;
+    expect(gated).toBeDefined();
+
+    const state = playing();
+    expect(optionAvailable(state, gated)).toBe(false);
+    expect(optionAvailable(openSource(state, CASE, "vale_wayback"), gated)).toBe(true);
+  });
+
+  it("keeps at least two options per step for a minimal run", () => {
+    for (const step of CASE.composer) {
+      const always = step.options.filter((o) => optionAvailable(playing(), o));
+      expect(always.length).toBeGreaterThanOrEqual(2);
+    }
+  });
+});
+
+describe("ending variants", () => {
+  it("remembers whether you read the journal", () => {
+    const reunion = CASE.endings.reunion;
+    const clean = endingExtras(playing(), reunion);
+    expect(clean.join(" ")).toMatch(/journal/i);
+
+    const read = endingExtras(file(playing(), "vale_reason"), reunion);
+    expect(read.join(" ")).not.toEqual(clean.join(" "));
+  });
+
+  it("the unsent ending exists and has no reply", () => {
+    expect(CASE.endings.away.reply).toBe("");
+    expect(CASE.endings.away.epilogue.length).toBeGreaterThan(100);
   });
 });

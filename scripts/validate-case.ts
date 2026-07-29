@@ -184,17 +184,83 @@ for (const chapter of CASE.chapters) {
   for (const id of wrongChapter) {
     fail(`Chapter ${chapter.id} key clue "${id}" lives in a later chapter's source`);
   }
+  // A key slot must be fillable by at least one reachable, true clue on a
+  // candidate — otherwise the chapter can only be finished on a lie.
+  for (const slot of chapter.keySlots ?? []) {
+    const fillers = Object.values(clues).filter(
+      (c) =>
+        c.slot === slot &&
+        !c.untrue &&
+        people[c.person] &&
+        !people[c.person]!.isSona &&
+        reachedClues.has(c.id),
+    );
+    if (!fillers.length) {
+      fail(`Chapter ${chapter.id} key slot "${slot}" has no reachable true clue on any candidate`);
+    }
+  }
+}
+
+/* --- the world can react, but not eat required evidence -------------------- */
+
+const keyIds = new Set(CASE.chapters.flatMap((c) => c.keyClues));
+for (const source of sources) {
+  for (const id of source.until ?? []) {
+    if (!clues[id]) fail(`${source.id} goes dark on unknown clue "${id}"`);
+  }
+  if (source.until?.length) {
+    const elsewhere = (id: string) =>
+      (sourcesByClue.get(id) ?? []).some((s) => s !== source.id);
+    const losable = (tokensBySource.get(source.id) ?? []).filter(
+      (id) => !keyIds.has(id) && !elsewhere(id) && !clues[id]?.untrue,
+    );
+    if (losable.length) {
+      warn(`${source.id} can go dark — true clues found only there can be missed: ${losable.join(", ")}`);
+    }
+  }
 }
 
 /* --- endings are all achievable ------------------------------------------- */
 
 for (const ending of Object.values(CASE.endings)) {
-  if (!ending.reply.trim()) fail(`Ending "${ending.id}" has no reply`);
+  // "away" is the ending where no message was sent, so no reply exists.
+  if (!ending.reply.trim() && ending.id !== "away") fail(`Ending "${ending.id}" has no reply`);
   if (!ending.epilogue.trim()) fail(`Ending "${ending.id}" has no epilogue`);
+  for (const v of ending.variants ?? []) {
+    for (const id of [v.requiresFiled, v.missingFiled]) {
+      if (id && !clues[id]) fail(`Ending "${ending.id}" variant references unknown clue "${id}"`);
+    }
+    for (const id of [v.requiresSeen, v.missingSeen]) {
+      if (id && !sourceIds.has(id)) {
+        fail(`Ending "${ending.id}" variant references unknown source "${id}"`);
+      }
+    }
+    if (!v.text.trim()) fail(`Ending "${ending.id}" has an empty variant`);
+  }
 }
 
+/* --- the composer offers a full conversation to every run ------------------ */
+
+const ungated = (step: (typeof CASE.composer)[number]) =>
+  step.options.filter((o) => !o.requiresFiled?.length && !o.requiresSeen?.length);
+
+for (const step of CASE.composer) {
+  if (ungated(step).length < 2) {
+    fail(`Composer step "${step.id}" needs at least two always-available options`);
+  }
+  for (const option of step.options) {
+    for (const id of option.requiresFiled ?? []) {
+      if (!clues[id]) fail(`Composer option "${option.id}" requires unknown clue "${id}"`);
+    }
+    for (const id of option.requiresSeen ?? []) {
+      if (!sourceIds.has(id)) fail(`Composer option "${option.id}" requires unknown source "${id}"`);
+    }
+  }
+}
+
+// The floor only counts options every run is offered; gated ones may be absent.
 const bestCase = CASE.composer.reduce(
-  (sum, step) => sum + Math.min(...step.options.map((o) => o.alarm)),
+  (sum, step) => sum + Math.min(...ungated(step).map((o) => o.alarm)),
   0,
 );
 const worstCase = CASE.composer.reduce(
@@ -202,18 +268,30 @@ const worstCase = CASE.composer.reduce(
   0,
 );
 /*
- * You cannot finish without filing every key clue, so those are a floor on
- * alarm. If that floor plus the gentlest possible message still lands above
- * the reunion threshold, the good ending is unreachable no matter how
- * carefully anyone plays.
+ * You cannot finish without filing every key clue and filling every key slot,
+ * so those are a floor on alarm. If that floor plus the gentlest possible
+ * message still lands above the reunion threshold, the good ending is
+ * unreachable no matter how carefully anyone plays.
  */
-const mandatory = CASE.chapters
-  .flatMap((c) => c.keyClues)
-  .reduce((sum, id) => sum + (WEIGHT[clues[id]?.provenance ?? "open"] ?? 0), 0);
+const slotFloor = CASE.chapters
+  .flatMap((c) => c.keySlots ?? [])
+  .reduce((sum, slot) => {
+    const costs = Object.values(clues)
+      .filter(
+        (c) => c.slot === slot && !c.untrue && people[c.person] && !people[c.person]!.isSona,
+      )
+      .map((c) => WEIGHT[c.provenance]);
+    return sum + (costs.length ? Math.min(...costs) : 0);
+  }, 0);
+
+const mandatory =
+  CASE.chapters
+    .flatMap((c) => c.keyClues)
+    .reduce((sum, id) => sum + (WEIGHT[clues[id]?.provenance ?? "open"] ?? 0), 0) + slotFloor;
 
 if (mandatory + bestCase > REUNION) {
   fail(
-    `The "reunion" ending is unreachable: the key clues alone cost ${mandatory} ` +
+    `The "reunion" ending is unreachable: the mandatory evidence alone costs ${mandatory} ` +
       `and the gentlest message only gives back ${-bestCase} (threshold ${REUNION})`,
   );
 }

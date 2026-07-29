@@ -193,6 +193,12 @@ export interface SourceDoc {
   readonly terms: readonly string[];
   /** Clues that must be filed before this page exists at all. */
   readonly requires?: readonly ClueId[];
+  /**
+   * Filing any of these clues takes the page down for good. The world reacts:
+   * accounts deactivate, pages 404. Anything already filed from it stays
+   * filed — you saw it, and that can't be undone either.
+   */
+  readonly until?: readonly ClueId[];
   /** Search terms that become available once this page has been read. */
   readonly unlocks?: readonly string[];
   readonly body: string;
@@ -230,19 +236,44 @@ export interface Chapter {
   readonly startTerms: readonly string[];
   /** Filing all of these ends the chapter. */
   readonly keyClues: readonly ClueId[];
+  /**
+   * Slots that must be filled on at least one candidate — a real person, not a
+   * sona — for the chapter to end. The gate is "build a case on somebody", not
+   * "find the right somebody", which is what makes a confident wrong case
+   * possible.
+   */
+  readonly keySlots?: readonly Slot[];
   /** Shown when the chapter completes. */
   readonly closing: string;
 }
 
-export type EndingId = "reunion" | "cautious" | "blocked" | "wrong";
+export type EndingId = "reunion" | "cautious" | "blocked" | "wrong" | "away";
+
+/**
+ * An extra epilogue paragraph that only appears when the run earned it. All
+ * conditions present on a variant must hold.
+ */
+export interface EndingVariant {
+  /** Only shown if this clue was filed at the end. */
+  readonly requiresFiled?: ClueId;
+  /** Only shown if this clue was never filed. */
+  readonly missingFiled?: ClueId;
+  /** Only shown if this page was read. */
+  readonly requiresSeen?: SourceId;
+  /** Only shown if this page was never read. */
+  readonly missingSeen?: SourceId;
+  readonly text: string;
+}
 
 export interface Ending {
   readonly id: EndingId;
   readonly title: string;
-  /** The reply you get, in their voice. */
+  /** The reply you get, in their voice. Empty only for "away" — no message, no reply. */
   readonly reply: string;
   /** What happened afterwards. */
   readonly epilogue: string;
+  /** Run-specific paragraphs appended to the epilogue. */
+  readonly variants?: readonly EndingVariant[];
 }
 
 /** One choice in the DM composer. */
@@ -251,6 +282,10 @@ export interface ComposerOption {
   readonly text: string;
   /** Negative = makes them more comfortable, positive = more alarmed. */
   readonly alarm: number;
+  /** Only offered if all of these clues are filed. You can't mention what you don't have. */
+  readonly requiresFiled?: readonly ClueId[];
+  /** Only offered if all of these pages were read. */
+  readonly requiresSeen?: readonly SourceId[];
 }
 
 export interface ComposerStep {

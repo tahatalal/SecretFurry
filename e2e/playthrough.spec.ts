@@ -219,6 +219,38 @@ test("filing a clue on the wrong person is refused", async ({ page }) => {
   await expect(page.locator(".dossier__head")).toContainText("2 filed");
 });
 
+test("walking away needs no accusation and never reveals the answer", async ({ page }) => {
+  await page.goto("/");
+  // Seed the finale directly; the greedy test owns the long way there.
+  await page.evaluate(() => {
+    const save = {
+      v: 1,
+      phase: "compose",
+      chapter: 3,
+      sona: {
+        name: "Pipit", species: "cat", head: "feline", fur: "ember",
+        marking: "none", markingFur: "cream", eyes: "gold",
+        accessory: "none", accent: "orchid", pronouns: "they/them",
+      },
+      known: ["vale", "marisol", "priya"],
+      muted: true,
+    };
+    localStorage.setItem("secret-furry:v2", JSON.stringify(save));
+  });
+  await page.reload();
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page.locator(".cm")).toBeVisible();
+
+  // No accusation, no lines picked — the door out is still open.
+  await page.locator('[data-act="walk-away"]').click();
+  await expect(page.locator(".ending--away")).toBeVisible();
+  await expect(page.locator(".ending__card")).toContainText("You close the laptop.");
+
+  // The one thing this ending must never do is answer the question.
+  await expect(page.locator(".ending__card")).not.toContainText(/It was /);
+  await expect(page.locator(".ending__card")).not.toContainText("They wrote back");
+});
+
 test("contradictions evict each other in the same slot", async ({ page }) => {
   await newGame(page);
   const clues = await page.evaluate(() => window.__SF__?.clues ?? {});

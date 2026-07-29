@@ -20,6 +20,7 @@ import {
   initialState,
   openSearch,
   openSource,
+  placeNode,
   selectTab,
   setToast,
   unfileClue,
@@ -48,6 +49,16 @@ export function mount(root: HTMLElement, kase: CaseFile): void {
   let sheet: Sheet = null;
   let toastTimer: number | null = null;
 
+  /** A search beat is in flight — results arrive after a moment, like real ones. */
+  let searching = false;
+  let searchTimer: number | null = null;
+
+  /** Timers for the blocked ending's typing sounds. Cleared on restart. */
+  let endingTimers: number[] = [];
+
+  const reducedMotion = (): boolean =>
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
   /* --- rendering ---------------------------------------------------------- */
 
   /*
@@ -66,6 +77,15 @@ export function mount(root: HTMLElement, kase: CaseFile): void {
     return { people, clues };
   }
 
+  /*
+   * Entrance animations only play when the thing actually enters. Re-render is
+   * whole-view, so without these flags every click would replay the rise on
+   * the whole screen — the compose page used to blink on every option picked.
+   */
+  let lastPhase: string | null = null;
+  let lastSheet: Sheet = null;
+  let lastToast: string | null = null;
+
   function render(): void {
     const state = store.get();
     let html: string;
@@ -79,7 +99,7 @@ export function mount(root: HTMLElement, kase: CaseFile): void {
         break;
       case "brief":
       case "play":
-        html = playView({ state, kase, heldClue: held, fresh: diffFresh(state) });
+        html = playView({ state, kase, heldClue: held, searching, fresh: diffFresh(state) });
         break;
       case "compose":
         html = composeView(state, kase);
@@ -94,16 +114,27 @@ export function mount(root: HTMLElement, kase: CaseFile): void {
     if (sheet === "about") html += aboutView();
     if (sheet === "brief") html += briefView(chapterOf(state, kase), state.sona);
     if (sheet === "chapter-end") html += chapterEndView(chapterOf(state, kase));
-    if (sheet === "notebook") html += notebookView(notebookLines(state));
+    if (sheet === "notebook") html += notebookView(state, kase);
 
     if (state.toast) {
       const tone = /doesn't|already|nothing/i.test(state.toast) ? "toast--bad" : "toast--good";
       html += `<div class="toast ${tone}">${escapeHtml(state.toast)}</div>`;
     }
 
+    const phaseChanged = state.phase !== lastPhase;
+    root.classList.toggle("enter-phase", phaseChanged);
+    root.classList.toggle("enter-sheet", sheet !== null && sheet !== lastSheet);
+    root.classList.toggle("enter-toast", state.toast !== null && state.toast !== lastToast);
+    lastPhase = state.phase;
+    lastSheet = sheet;
+    lastToast = state.toast;
+
     const scroll = snapshotScroll();
     root.innerHTML = html;
-    applyScroll(scroll);
+    // Scroll only survives within a phase. A new screen starts at its top —
+    // otherwise the ending opens wherever the compose page happened to be.
+    if (phaseChanged) window.scrollTo({ top: 0 });
+    else applyScroll(scroll);
     decorateChunks();
     restoreFocus();
     syncGhost();
@@ -142,11 +173,20 @@ export function mount(root: HTMLElement, kase: CaseFile): void {
     if (snap.window) window.scrollTo({ top: snap.window });
   }
 
-  function notebookLines(state: GameState): string[] {
-    return state.filed
-      .map((id) => kase.clues[id])
-      .filter((c): c is NonNullable<typeof c> => Boolean(c))
-      .map((c) => `${kase.people[c.person]?.name ?? c.person} — ${c.label}`);
+  /**
+   * Open a search and let the results take a beat to arrive. Instant results
+   * read as a database query; a short wait reads as the internet.
+   */
+  function runSearch(next: GameState): void {
+    if (searchTimer) window.clearTimeout(searchTimer);
+    searching = !reducedMotion();
+    update(next);
+    if (!searching) return;
+    searchTimer = window.setTimeout(() => {
+      searching = false;
+      searchTimer = null;
+      render();
+    }, 280 + Math.random() * 320);
   }
 
   /** Mark filed clues; the rest are draggable via pointer events. */
@@ -203,16 +243,82 @@ export function mount(root: HTMLElement, kase: CaseFile): void {
     const before = state.filed.length;
     const result = fileClue(state, kase, id, person);
     if (result.ok) {
+      // Where the clue is leaving from, captured before the re-render eats it.
+      const from =
+        root.querySelector<HTMLElement>(`.chunk[data-clue="${id}"]`)?.getBoundingClientRect() ??
+        lastPointer;
+      const replaced = result.state.filed.length === before;
       held = null;
-      if (result.state.filed.length === before) audio.sfx.replace();
+      if (replaced) audio.sfx.replace();
       else audio.sfx.file();
       const wasComplete = chapterComplete(state, kase);
       update(result.state);
       if (!wasComplete && chapterComplete(result.state, kase)) audio.sfx.unlock();
+      flyToDossier(id, from, replaced);
     } else {
       audio.sfx.reject();
       update(setToast(state, result.message), { persist: false });
     }
+  }
+
+  /** Last known pointer position, as a rect-ish fallback for keyboard filing. */
+  let lastPointer: DOMRect | null = null;
+
+  /**
+   * The clue label physically travels from where you picked it up to the row
+   * it landed in. Pure decoration, so it bails under reduced motion and
+   * whenever either end of the journey can't be found.
+   */
+  function flyToDossier(clueId: string, from: DOMRect | null, replaced: boolean): void {
+    const clue = kase.clues[clueId];
+    const slotSel = clue?.slot
+      ? `.slot[data-slot="${clue.slot}"]`
+      : `.profile__links .profile__link`;
+    const target =
+      root.querySelector<HTMLElement>(`${slotSel}.is-new`) ??
+      root.querySelector<HTMLElement>(slotSel) ??
+      root.querySelector<HTMLElement>(`.rail__card[data-person="${clue?.person ?? ""}"]`);
+
+    if (replaced && clue?.slot) {
+      // The old value gets knocked out of the slot: one sharp jolt.
+      root
+        .querySelector<HTMLElement>(`.slot[data-slot="${clue.slot}"]`)
+        ?.classList.add("is-jolted");
+    }
+
+    if (reducedMotion() || !clue || !from || !target) return;
+    const to = target.getBoundingClientRect();
+
+    const ghost = document.createElement("div");
+    ghost.className = "fly";
+    ghost.textContent = clue.label;
+    ghost.style.left = `${from.left}px`;
+    ghost.style.top = `${from.top}px`;
+    document.body.appendChild(ghost);
+
+    ghost
+      .animate(
+        [
+          { transform: "translate(0, 0) scale(1)", opacity: 1 },
+          {
+            transform: `translate(${to.left - from.left}px, ${to.top - from.top}px) scale(0.55)`,
+            opacity: 0.4,
+          },
+        ],
+        { duration: 260, easing: "steps(7, end)", fill: "forwards" },
+      )
+      .finished.finally(() => ghost.remove());
+  }
+
+  /** A quick settle-flash on the message preview when a line is picked. */
+  function pulsePreview(): void {
+    if (reducedMotion()) return;
+    root
+      .querySelector<HTMLElement>(".cm-preview__body")
+      ?.animate(
+        [{ opacity: 0.35, transform: "translateY(3px)" }, { opacity: 1, transform: "translateY(0)" }],
+        { duration: 180, easing: "steps(4, end)" },
+      );
   }
 
   /* --- fursona edits ------------------------------------------------------ */
@@ -298,11 +404,13 @@ export function mount(root: HTMLElement, kase: CaseFile): void {
         update(openSearch(state, ""));
         break;
       case "search":
-        update(openSearch(state, el.dataset.query ?? ""));
+        runSearch(openSearch(state, el.dataset.query ?? ""));
         audio.sfx.open();
         break;
       case "open-source": {
         const id = el.dataset.source ?? "";
+        // The notebook links straight to sources; following one closes it.
+        if (sheet) sheet = null;
         update(openSource(state, kase, id));
         audio.sfx.open();
         break;
@@ -354,11 +462,17 @@ export function mount(root: HTMLElement, kase: CaseFile): void {
         sheet = "notebook";
         render();
         break;
+      case "notebook-brief":
+        sheet = "brief";
+        render();
+        break;
       case "mute":
         audio.setMuted(!state.muted);
         update({ ...state, muted: !state.muted });
         break;
       case "quit":
+        for (const t of endingTimers) window.clearTimeout(t);
+        endingTimers = [];
         update({ ...state, phase: "title" });
         break;
 
@@ -367,6 +481,7 @@ export function mount(root: HTMLElement, kase: CaseFile): void {
         const option = el.dataset.option ?? "";
         update({ ...state, answers: { ...state.answers, [step]: option } });
         audio.sfx.click();
+        pulsePreview();
         break;
       }
       case "accuse":
@@ -375,13 +490,36 @@ export function mount(root: HTMLElement, kase: CaseFile): void {
         break;
       case "send": {
         audio.sfx.send();
-        update({ ...state, phase: "ending", ending: el.dataset.ending ?? null });
+        const ending = el.dataset.ending ?? null;
+        update({ ...state, phase: "ending", ending });
+        audio.stopAmbience();
+        // The blocked ending's typing indicator makes sound, then stops
+        // making sound, which is the worst part. Timed to the CSS timeline.
+        if (ending === "blocked" && !reducedMotion()) {
+          for (const at of [1600, 4200]) {
+            endingTimers.push(
+              window.setTimeout(() => {
+                for (let i = 0; i < 5; i += 1) {
+                  endingTimers.push(window.setTimeout(() => audio.sfx.type(), i * 90));
+                }
+              }, at),
+            );
+          }
+        }
+        break;
+      }
+      case "walk-away": {
+        // No accusation required, no message sent, no answer ever.
+        audio.sfx.click();
+        update({ ...state, phase: "ending", ending: "away" });
         audio.stopAmbience();
         break;
       }
       case "restart":
         clearSave();
         audio.stopAmbience();
+        for (const t of endingTimers) window.clearTimeout(t);
+        endingTimers = [];
         update(initialState(), { persist: false });
         break;
 
@@ -425,7 +563,7 @@ export function mount(root: HTMLElement, kase: CaseFile): void {
     const query = input?.value.trim() ?? "";
     if (!query) return;
     audio.sfx.open();
-    update(openSearch(store.get(), query));
+    runSearch(openSearch(store.get(), query));
   });
 
   root.addEventListener("input", (event) => {
@@ -553,18 +691,47 @@ export function mount(root: HTMLElement, kase: CaseFile): void {
     root.querySelectorAll(".is-drop").forEach((el) => el.classList.remove("is-drop"));
   }
 
+  /* A web node being dragged to a new spot on the board. */
+  interface NodeDrag {
+    id: string;
+    el: HTMLElement;
+    canvas: DOMRect;
+    x: number;
+    y: number;
+    moved: boolean;
+  }
+  let nodeDrag: NodeDrag | null = null;
+
   root.addEventListener("pointerdown", (event) => {
-    const chunk = (event.target as HTMLElement).closest<HTMLElement>(".chunk");
-    if (!chunk || chunk.classList.contains("is-filed")) return;
-    pending = {
-      id: chunk.dataset.clue ?? "",
-      x: event.clientX,
-      y: event.clientY,
-      dragging: false,
-    };
+    const target = event.target as HTMLElement;
+    const chunk = target.closest<HTMLElement>(".chunk");
+    if (chunk && !chunk.classList.contains("is-filed")) {
+      pending = {
+        id: chunk.dataset.clue ?? "",
+        x: event.clientX,
+        y: event.clientY,
+        dragging: false,
+      };
+      return;
+    }
+    // With empty hands, web nodes can be rearranged — it's a corkboard, and
+    // corkboards are for moving things around until they make sense.
+    const node = target.closest<HTMLElement>(".web__node");
+    const canvas = node?.closest<HTMLElement>(".web__canvas");
+    if (node && canvas && !held) {
+      nodeDrag = {
+        id: node.dataset.person ?? "",
+        el: node,
+        canvas: canvas.getBoundingClientRect(),
+        x: event.clientX,
+        y: event.clientY,
+        moved: false,
+      };
+    }
   });
 
   document.addEventListener("pointermove", (event) => {
+    lastPointer = new DOMRect(event.clientX, event.clientY, 0, 0);
     if (pending && !pending.dragging) {
       const moved = Math.hypot(event.clientX - pending.x, event.clientY - pending.y);
       if (moved > 5) {
@@ -573,11 +740,41 @@ export function mount(root: HTMLElement, kase: CaseFile): void {
         render();
       }
     }
+    if (nodeDrag) {
+      if (!nodeDrag.moved) {
+        const moved = Math.hypot(event.clientX - nodeDrag.x, event.clientY - nodeDrag.y);
+        if (moved > 5) nodeDrag.moved = true;
+      }
+      if (nodeDrag.moved) {
+        // Style-only while the pointer is down; state catches up on release.
+        const nx = clampPct(((event.clientX - nodeDrag.canvas.left) / nodeDrag.canvas.width) * 100);
+        const ny = clampPct(((event.clientY - nodeDrag.canvas.top) / nodeDrag.canvas.height) * 100);
+        nodeDrag.el.style.left = `${nx}%`;
+        nodeDrag.el.style.top = `${ny}%`;
+        nodeDrag.el.classList.add("is-dragging");
+      }
+    }
     if (held) paintHover(event.clientX, event.clientY);
     syncGhost(event.clientX, event.clientY);
   });
 
+  function clampPct(value: number): number {
+    return Math.max(6, Math.min(94, value));
+  }
+
   document.addEventListener("pointerup", (event) => {
+    if (nodeDrag) {
+      const drag = nodeDrag;
+      nodeDrag = null;
+      if (drag.moved) {
+        suppressClick = true;
+        const nx = clampPct(((event.clientX - drag.canvas.left) / drag.canvas.width) * 100);
+        const ny = clampPct(((event.clientY - drag.canvas.top) / drag.canvas.height) * 100);
+        update(placeNode(store.get(), drag.id, [nx, ny]));
+        return;
+      }
+    }
+
     const wasDragging = pending?.dragging ?? false;
     pending = null;
     if (!wasDragging) return;
