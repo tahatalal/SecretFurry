@@ -11,8 +11,9 @@
 
 import process from "node:process";
 import { CASE } from "../src/content/index.ts";
+import { sceneIds } from "../src/art/scenes.ts";
 import { matchesQuery } from "../src/engine/state.ts";
-import { clueIdsIn, linkIdsIn } from "../src/platforms/kit.ts";
+import { clueIdsIn, linkIdsIn, usedArtIds } from "../src/platforms/kit.ts";
 import { CAUTIOUS, REUNION, WEIGHT } from "../src/engine/ending.ts";
 import type { ClueId, SourceDoc } from "../src/engine/types.ts";
 
@@ -333,6 +334,17 @@ for (const source of sources) {
     fail(`${source.id} has no search terms and nothing links to it — nothing can find it`);
   }
   if (!source.blurb.trim()) fail(`${source.id} has no search-result blurb`);
+}
+
+/* --- every painted scene is on a page somewhere ---------------------------- */
+
+// Unknown ids already throw inside imgbox when content loads; this is the
+// other direction — art that exists but nothing displays.
+const MAP_ART = new Set(["map_pin"]); // drawn by the maps chrome, not content
+for (const id of sceneIds()) {
+  if (!usedArtIds.has(id) && !MAP_ART.has(id)) {
+    warn(`Scene "${id}" is painted but no page shows it`);
+  }
 }
 
 /* --- report --------------------------------------------------------------- */

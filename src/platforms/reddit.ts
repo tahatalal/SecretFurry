@@ -1,5 +1,5 @@
 import type { Page } from "../engine/types.ts";
-import { count, esc, initialAvatar, page, rich } from "./kit.ts";
+import { count, esc, imgbox, initialAvatar, page, rich } from "./kit.ts";
 
 export interface RedditComment {
   readonly user: string;
@@ -17,7 +17,7 @@ export interface RedditThread {
   readonly time: string;
   readonly score: number;
   readonly body?: string;
-  readonly image?: { alt: string };
+  readonly image?: { alt: string; art?: string };
   readonly flair?: string;
   readonly comments: readonly RedditComment[];
 }
@@ -63,7 +63,7 @@ export function redditThread(thread: RedditThread): Page {
           </div>
           <h1>${rich(thread.title)}${thread.flair ? `<span class="rd-flair">${esc(thread.flair)}</span>` : ""}</h1>
           ${thread.body ? `<div class="rd-body">${rich(thread.body)}</div>` : ""}
-          ${thread.image ? `<div class="pf-imgbox pf-imgbox--big">${rich(thread.image.alt)}</div>` : ""}
+          ${thread.image ? imgbox(thread.image.alt, { art: thread.image.art, big: true }) : ""}
           <div class="rd-actions">
             <span>&#128172; ${thread.comments.length} comments</span>
             <span>&#8631; Share</span><span>&#9733; Save</span><span>&#8943;</span>

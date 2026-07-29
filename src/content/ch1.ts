@@ -421,18 +421,22 @@ Ko-fi is in my links if the queue is closed and you still want to throw three do
         {
           title: "MFF badge batch — thank you all",
           alt: "Nine laminated badges fanned out on a hotel bedspread. Every one is lineless with a strong orange rim light. A small dark glyph sits in the bottom right corner of each.",
+          art: "fa_badges",
         },
         {
           title: "Sundog ref — commission",
           alt: "A full reference sheet for a coyote sona named Sundog. Front, back, headshot, palette swatches with hex codes.",
+          art: "fa_ref_sundog",
         },
         {
           title: "badge YCH — 3 slots — CLOSED",
           alt: "A your-character-here template: a generic canid leaning on a railing, lit from behind, with the face left blank.",
+          art: "fa_ych",
         },
         {
           title: "practice — hands, again, forever",
           alt: "Two pages of hand studies in the same lineless style, unsigned.",
+          art: "fa_hands",
         },
       ],
       journals: [
@@ -509,6 +513,7 @@ Blocks 1–8 in this thread. 9–20 in the reply below. Find yourself, tag yours
           time: "Dec 2024",
           text: `BLOCK 14 — this was the good one. Best light of the whole parade, the corridor windows were doing something incredible around 2pm.`,
           image: {
+            art: "parade_block",
             alt: `Wide shot of a numbered parade block in a convention corridor. Front row centre is {{c:vale_suit|a maned wolf partial — head, handpaws and tail over ordinary clothes, sunset gradient down the muzzle fading to a cream chest}}, one arm up mid-wave. Clipped to the harness is a hand-cut laminated badge with a small dark glyph in the corner.`,
             caption: `{{c:vale_con|Block 14, MFF 2024}} — maned wolf front row, if that's you please say hi, this is my favourite frame of the entire weekend`,
           },
@@ -740,6 +745,7 @@ Blocks 1–8 in this thread. 9–20 in the reply below. Find yourself, tag yours
       created: "12 Jan 2017",
       designer: "self — {{c:vale_tell|signed with a four-stroke wolf head instead of initials}}",
       tags: ["maned wolf", "canine", "SFW only", "not for trade", "personal sona"],
+      refArt: "toyhouse_ref",
       refAlt: `Reference sheet, three views. A maned wolf with a sunset gradient running from the muzzle down the chest — deep orange at the nose fading to cream. Palette swatches along the bottom with hex codes. In the bottom right corner, small and dark, a four-stroke wolf head.`,
       profile: `Vale. Maned wolf. Eight years old as a character and I have redesigned them exactly twice, both times badly, both times reverted within a month.
 

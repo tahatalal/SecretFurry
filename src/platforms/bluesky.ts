@@ -1,6 +1,6 @@
 import type { Fursona } from "../art/fursona.ts";
 import type { Page } from "../engine/types.ts";
-import { avatar, count, esc, line, page, rich } from "./kit.ts";
+import { avatar, count, esc, imgbox, page, rich } from "./kit.ts";
 
 export interface BskyPost {
   readonly author: Fursona;
@@ -10,8 +10,8 @@ export interface BskyPost {
   readonly replies?: number;
   readonly reposts?: number;
   readonly likes?: number;
-  /** Renders as an image card with a caption instead of a real image. */
-  readonly image?: { alt: string; caption?: string };
+  /** An image card: pixel art when `art` names a scene, alt text always. */
+  readonly image?: { alt: string; caption?: string; art?: string };
   readonly replyTo?: string;
   /** A quoted post shown inset. */
   readonly quote?: { handle: string; name: string; text: string };
@@ -54,10 +54,10 @@ function postRow(post: BskyPost): string {
         }
         ${
           post.image
-            ? `<figure class="bsky-image">
-                 <div class="pf-imgbox">${line(post.image.alt)}</div>
-                 ${post.image.caption ? `<figcaption>${rich(post.image.caption)}</figcaption>` : ""}
-               </figure>`
+            ? `<div class="bsky-image">
+                 ${imgbox(post.image.alt, { art: post.image.art })}
+                 ${post.image.caption ? `<div class="bsky-imgcap">${rich(post.image.caption)}</div>` : ""}
+               </div>`
             : ""
         }
         <div class="bsky-actions">

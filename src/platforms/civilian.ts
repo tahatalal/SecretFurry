@@ -4,7 +4,7 @@
    ending punishes. */
 
 import type { Page } from "../engine/types.ts";
-import { count, esc, initialAvatar, line, page, rich } from "./kit.ts";
+import { artImg, count, esc, imgbox, initialAvatar, line, page, rich } from "./kit.ts";
 
 export function linkedinProfile(opts: {
   readonly name: string;
@@ -91,7 +91,7 @@ export function instagramProfile(opts: {
   readonly posts: number;
   readonly followers: number;
   readonly following: number;
-  readonly grid: readonly { alt: string; caption?: string; likes?: number }[];
+  readonly grid: readonly { alt: string; caption?: string; likes?: number; art?: string }[];
 }): Page {
   return page(
     "instagram",
@@ -116,7 +116,7 @@ export function instagramProfile(opts: {
           .map(
             (g) => `
           <figure class="ig-cell">
-            <div class="pf-imgbox">${line(g.alt)}</div>
+            ${imgbox(g.alt, { art: g.art })}
             ${g.caption ? `<figcaption>${rich(g.caption)}</figcaption>` : ""}
           </figure>`,
           )
@@ -131,7 +131,7 @@ export function facebookPost(opts: {
   readonly author: string;
   readonly when: string;
   readonly body: string;
-  readonly image?: { alt: string };
+  readonly image?: { alt: string; art?: string };
   readonly reactions: number;
   readonly comments: readonly { by: string; text: string; when: string }[];
 }): Page {
@@ -147,7 +147,7 @@ export function facebookPost(opts: {
           <div><b>${line(opts.author)}</b><div class="fb-when">${esc(opts.when)}</div></div>
         </div>
         <div class="fb-body">${rich(opts.body)}</div>
-        ${opts.image ? `<div class="pf-imgbox pf-imgbox--big">${rich(opts.image.alt)}</div>` : ""}
+        ${opts.image ? imgbox(opts.image.alt, { art: opts.image.art, big: true }) : ""}
         <div class="fb-stats">&#128077; ${opts.reactions} &middot; ${opts.comments.length} comments</div>
         <div class="fb-comments">
           ${opts.comments
@@ -173,6 +173,7 @@ export function youtubeVideo(opts: {
   readonly views: string;
   readonly when: string;
   readonly frameAlt: string;
+  readonly frameArt?: string;
   readonly description: string;
   readonly comments: readonly { by: string; when: string; text: string; likes?: number }[];
 }): Page {
@@ -181,7 +182,7 @@ export function youtubeVideo(opts: {
     `
     <div class="yt">
       <header class="yt-top"><span class="yt-mark">&#9654;</span><b>YouTube</b><span class="yt-search">Search</span></header>
-      <div class="yt-player"><div class="pf-imgbox pf-imgbox--big">${line(opts.frameAlt)}</div></div>
+      <div class="yt-player">${imgbox(opts.frameAlt, { art: opts.frameArt, big: true })}</div>
       <h1 class="yt-title">${line(opts.title)}</h1>
       <div class="yt-meta">${esc(opts.views)} views &middot; ${esc(opts.when)}</div>
       <div class="yt-channel">
@@ -236,7 +237,7 @@ export function mapsPlace(opts: {
           ${"&#9733;".repeat(Math.round(opts.rating))} <span>(${opts.reviewCount})</span></div>
         <div class="mp-addr">${line(opts.address)}</div>
       </section>
-      <div class="mp-canvas">Map</div>
+      <div class="mp-canvas">${artImg("map_pin") || "Map"}</div>
       <section class="mp-reviews">
         ${opts.reviews
           .map(
@@ -263,7 +264,7 @@ export function newsArticle(opts: {
   readonly standfirst: string;
   readonly byline: string;
   readonly dateline: string;
-  readonly photo?: { alt: string; caption: string };
+  readonly photo?: { alt: string; caption: string; art?: string };
   readonly body: string;
 }): Page {
   return page(
@@ -282,7 +283,7 @@ export function newsArticle(opts: {
         ${
           opts.photo
             ? `<figure class="nw-photo">
-                 <div class="pf-imgbox pf-imgbox--big">${line(opts.photo.alt)}</div>
+                 ${imgbox(opts.photo.alt, { art: opts.photo.art, big: true })}
                  <figcaption>${rich(opts.photo.caption)}</figcaption>
                </figure>`
             : ""

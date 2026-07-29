@@ -57,6 +57,61 @@
   font-size: 14px;
 }
 
+/* When a scene exists the box becomes a real photograph: pixel art on top,
+   and the description kept underneath as visible alt text — screen readers
+   need it, real platforms surface it, and some clues live inside it. */
+.pf-imgbox.has-art {
+  display: block;
+  padding: 0;
+  min-height: 0;
+  margin: 0;
+  overflow: hidden;
+  background: none;
+}
+
+.pf-imgbox.has-art::before {
+  display: none;
+}
+
+.pf-art {
+  display: block;
+  width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.pf-alt {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 6px 9px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #5a5270;
+  background: rgb(43 36 56 / 0.05);
+  border-top: 1px solid rgb(43 36 56 / 0.12);
+}
+
+.pf-alt b {
+  flex: none;
+  padding: 1px 5px;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  background: rgb(43 36 56 / 0.75);
+  color: #fff8ec;
+  border-radius: 3px;
+  transform: translateY(-1px);
+}
+
+/* Dark platforms keep their own light-on-dark alt strip. */
+.fa .pf-alt,
+.dc .pf-alt {
+  color: #b9c2cc;
+  background: rgb(0 0 0 / 0.28);
+  border-top-color: rgb(0 0 0 / 0.4);
+}
+
 .pf-avatar {
   image-rendering: pixelated;
   border-radius: 50%;
@@ -230,7 +285,8 @@
   margin: 10px 0 0;
 }
 
-.bsky-image figcaption {
+.bsky-image figcaption,
+.bsky-imgcap {
   margin-top: 5px;
   font-size: 13px;
   color: #566573;

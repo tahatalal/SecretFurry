@@ -3,15 +3,15 @@
 
 import type { Fursona } from "../art/fursona.ts";
 import type { Page } from "../engine/types.ts";
-import { avatar, esc, initialAvatar, page, rich } from "./kit.ts";
+import { avatar, esc, imgbox, initialAvatar, page, rich } from "./kit.ts";
 
 export interface ChatLine {
   readonly who: string;
   readonly sona?: Fursona;
   readonly time: string;
   readonly text: string;
-  /** Renders as a shared image card. */
-  readonly image?: { alt: string };
+  /** A shared image: pixel art when `art` names a scene, alt text always. */
+  readonly image?: { alt: string; art?: string };
   /** Renders as a system line: joins, pins, name changes. */
   readonly system?: boolean;
   /** Marks the message as edited or deleted, which is often the clue. */
@@ -35,7 +35,7 @@ function lineRow(line: ChatLine, compact: boolean): string {
       <div class="ch-bubble">
         <div class="ch-meta"><b>${esc(line.who)}</b><span>${esc(line.time)}</span></div>
         <div class="ch-text">${rich(line.text)}</div>
-        ${line.image ? `<div class="pf-imgbox">${rich(line.image.alt)}</div>` : ""}
+        ${line.image ? imgbox(line.image.alt, { art: line.image.art }) : ""}
         ${line.note ? `<div class="ch-note">${rich(line.note)}</div>` : ""}
       </div>
     </div>`;

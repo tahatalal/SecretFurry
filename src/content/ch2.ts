@@ -453,6 +453,7 @@ photo thread, everyone said yes to being posted, nobody's face is in any of thes
           time: "April",
           text: `the lineup. from the left: Sprocket, Bramble, Quillon, me, Tessellate, and Vale being Vale about it`,
           image: {
+            art: "bowling_backs",
             alt: `Six people photographed from behind in a bowling alley, all wearing sona-themed hoodies and none facing the camera. The one on the far right is holding a bowling ball with both hands and has clearly just turned away from the lens.`,
             caption: `Vale has been photographed at four consecutive meets and I do not have a single picture of their face. it's a bit now. it's committed to.`,
           },
@@ -560,16 +561,19 @@ I know what most of you are making. I have known for nine years. You do not have
           title: "1/2\" upholstery foam — cut to size",
           price: "$14.00",
           alt: "A stack of pale grey foam sheets, cut square, on a shop counter.",
+          art: "foam_stack",
         },
         {
           title: "Minky bundle — 12 colors, fursuit maker pack",
           price: "$68.00",
           alt: "Twelve folded squares of short-pile fabric in bright colors, fanned out.",
+          art: "minky_bundle",
         },
         {
           title: "Buckram + mesh — head vision pack",
           price: "$22.00",
           alt: "A roll of stiff black mesh beside a sheet of buckram.",
+          art: "mesh_roll",
         },
       ],
       reviews: [
@@ -797,6 +801,7 @@ Third thing. Somebody left a heat gun here in April. It has been in the back roo
       byline: "By Danielle Prescott",
       dateline: "May 14",
       photo: {
+        art: "mural_photo",
         alt: `A mural on the side of a brick building: a row of stylized animals in sunset colors, each one outlined in orange light from behind. Students in paint-spattered hoodies stand in front of it, arms up.`,
         caption: `Eighth graders from Kishwaukee Middle School with the completed mural. Their teacher, who organized the project, is not pictured at their own request.`,
       },

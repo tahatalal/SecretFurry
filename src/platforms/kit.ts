@@ -12,6 +12,8 @@
 
 import type { Fursona } from "../art/fursona.ts";
 import { fursonaUrl } from "../art/fursona.ts";
+import { spriteImg } from "../art/pixel.ts";
+import { sceneById } from "../art/scenes.ts";
 import type { Page, PlatformId } from "../engine/types.ts";
 
 export function esc(value: string): string {
@@ -101,6 +103,36 @@ export function clueIdsIn(body: string): string[] {
 
 export function paragraphs(text: string): string {
   return `<p>${rich(text)}</p>`;
+}
+
+/**
+ * A photograph. `art` names a scene from art/scenes.ts, drawn above the
+ * description; the description stays visible as the image's alt text — real
+ * platforms surface alt text, screen readers need it, and some of the game's
+ * clues live inside it, so it is never thrown away.
+ *
+ * An unknown art id throws rather than silently falling back to text, so a
+ * typo in content dies in the validator instead of shipping.
+ */
+/** Every art id content has asked for — the validator checks none go unused. */
+export const usedArtIds = new Set<string>();
+
+export function imgbox(alt: string, opts: { art?: string; big?: boolean } = {}): string {
+  const big = opts.big ? " pf-imgbox--big" : "";
+  if (opts.art) usedArtIds.add(opts.art);
+  const scene = opts.art ? sceneById(opts.art) : null;
+  if (opts.art && !scene) throw new Error(`imgbox: no scene painted for art id "${opts.art}"`);
+  if (!scene) return `<div class="pf-imgbox${big}">${rich(alt)}</div>`;
+  return `<figure class="pf-imgbox${big} has-art">
+    ${spriteImg(scene, { className: "pf-art" })}
+    <figcaption class="pf-alt"><b>ALT</b><span>${rich(alt)}</span></figcaption>
+  </figure>`;
+}
+
+/** Bare scene <img>, for chrome that isn't a photo box (the maps canvas). */
+export function artImg(id: string, className = "pf-art"): string {
+  const scene = sceneById(id);
+  return scene ? spriteImg(scene, { className }) : "";
 }
 
 export function avatar(sona: Fursona, size = 40, className = ""): string {

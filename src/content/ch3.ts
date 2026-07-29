@@ -546,26 +546,32 @@ plush commissions when the queue is open. the queue is not open
 rockford il`,
       grid: [
         {
+          art: "cats_windowsill",
           alt: "Three cats arranged on a sunny windowsill in a tidy apartment: a large tabby, a small black cat, and an orange cat mid-yawn.",
           caption: `{{c:priya_pet_real|household census: Dosa, Peanut, and Mo. all present. all fully sighted. all furious that the census interrupted second breakfast}}`,
         },
         {
+          art: "plush_fox",
           alt: "A hand-sewn plush red fox sitting on a cutting mat, beside a spool of thread and a thimble.",
           caption: `{{c:priya_craft|commission finished: one small fox, two hundred and forty stitches, every one of them by hand because the machine and I are not currently speaking}}. the queue is closed. I see you typing. I love you. it's closed`,
         },
         {
+          art: "break_room",
           alt: "A phone photo of a hospital break room, a lunchbox, and a wall clock reading ten past three.",
           caption: `{{c:priya_schedule|four tens, tuesday through friday, out the door by three}} — which everyone hears as "free time" and actually means I am asleep by nine like a farm animal`,
         },
         {
+          art: "craft_table",
           alt: "A folding table at an autumn craft fair, laid out with a dozen small hand-sewn plush animals under a string of paper leaves.",
           caption: `fair season. everything on this table took longer than you think and cost less than it should. yes the badger has a tiny scarf. no the scarf is not sold separately`,
         },
         {
+          art: "med_drawer",
           alt: "A close-up of insulin syringes organized in a labeled drawer, photographed with visible pride.",
           caption: `reorganized the med drawer during a quiet hour and honestly it belongs in a museum. this is the content you follow me for`,
         },
         {
+          art: "pot_holder",
           alt: "A quilted pot holder next to a slightly burned casserole dish.",
           caption: `nadia made the pot holder. I made the casserole. one of us is good at things`,
         },
@@ -592,26 +598,32 @@ rockford il`,
 lagos ↔ rkfd`,
       grid: [
         {
+          art: "blackwork_arm",
           alt: "A dense blackwork forearm piece: heavy solid outlines, no shading, no colour anywhere.",
           caption: `six hours. all line. {{c:dev_art|I do not shade and I do not colour and I have made peace with this}}`,
         },
         {
+          art: "botanical_lines",
           alt: "A sketchbook page of botanical linework, every stem a single unbroken stroke.",
           caption: `warmup`,
         },
         {
+          art: "departures",
           alt: "A photograph of a departures board at an airport, Lagos flights listed.",
           caption: `{{c:dev_out|three weeks. see you all in january}} — posted December 1`,
         },
         {
+          art: "market_dusk",
           alt: "A market street at dusk, phone photo, motion blur.",
           caption: `day 9. missing nothing about illinois in december`,
         },
         {
+          art: "jollof",
           alt: "A hand holding a bowl of jollof rice.",
           caption: `day 14`,
         },
         {
+          art: "snow_windshield",
           alt: "Snow on a car windshield outside a tattoo shop.",
           caption: `back. it was 4 degrees when I landed. january 2`,
         },
@@ -633,6 +645,7 @@ lagos ↔ rkfd`,
       subs: "2.1K",
       views: "1,204",
       when: "Streamed 3 weeks ago",
+      frameArt: "stream_vod",
       frameAlt: `A stream VOD thumbnail: a webcam box in the corner of a game capture, and a schedule overlay reading MON–FRI 2PM–6PM CT.`,
       description: `{{c:theo_out|live weekdays 2pm to 6pm central, every weekday, no exceptions, I have done this for two years and it is the only structure in my life}}
 
@@ -686,6 +699,7 @@ Eleven weeks. Foam from June's on Kishwaukee, minky ordered, buckram eyes, fans 
 
 If you build and you can't draw — it's fine. Commission it. Pay people. The drawing is a different job.`,
       image: {
+        art: "fursuit_workbench",
         alt: `A completed fursuit head on a workbench beside an industrial serger, surrounded by foam offcuts and a printed reference sheet taped to the wall.`,
       },
       reactions: 88,
@@ -774,6 +788,7 @@ And find the group of people who are up when you are. Which is this one. I have 
 
 Anyway. Six hours left on this shift. Who's up.`,
       image: {
+        art: "loading_dock",
         alt: `A photograph of a warehouse loading dock at night, floodlit, taken from inside a break room window.`,
       },
       reactions: 41,

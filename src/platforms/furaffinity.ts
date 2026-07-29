@@ -1,6 +1,6 @@
 import type { Fursona } from "../art/fursona.ts";
 import type { Page } from "../engine/types.ts";
-import { avatar, esc, line, page, rich } from "./kit.ts";
+import { avatar, esc, imgbox, line, page, rich } from "./kit.ts";
 
 export interface FaComment {
   readonly author: Fursona;
@@ -13,6 +13,7 @@ export interface FaComment {
 export interface FaSubmission {
   readonly title: string;
   readonly alt: string;
+  readonly art?: string;
   readonly tags: readonly string[];
   readonly posted: string;
   readonly views: number;
@@ -34,7 +35,7 @@ export interface FaUserPage {
   readonly profile: string;
   readonly stats: { views: number; submissions: number; favs: number; watchers: number };
   readonly journals?: readonly FaJournal[];
-  readonly gallery?: readonly { title: string; alt: string }[];
+  readonly gallery?: readonly { title: string; alt: string; art?: string }[];
   readonly shouts?: readonly FaComment[];
 }
 
@@ -94,7 +95,7 @@ export function faUser(user: FaUserPage): Page {
                  ${user.gallery
                    .map(
                      (g) =>
-                       `<figure class="fa-thumb"><div class="pf-imgbox">${line(g.alt)}</div><figcaption>${line(g.title)}</figcaption></figure>`,
+                       `<figure class="fa-thumb">${imgbox(g.alt, { art: g.art })}<figcaption>${line(g.title)}</figcaption></figure>`,
                    )
                    .join("")}
                </div>
@@ -143,7 +144,7 @@ export function faSubmission(opts: {
     "furaffinity",
     faChrome(`
       <section class="fa-submission">
-        <div class="pf-imgbox pf-imgbox--big">${line(sub.alt)}</div>
+        ${imgbox(sub.alt, { art: sub.art, big: true })}
         <header class="fa-subhead">
           <h1>${line(sub.title)}</h1>
           <div class="fa-subby">by ${avatar(opts.artist, 28, "fa-inlinepfp")} <b>${esc(opts.handle)}</b></div>

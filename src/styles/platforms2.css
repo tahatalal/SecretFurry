@@ -1214,6 +1214,16 @@
   color: #ddd;
 }
 
+.yt-player .pf-imgbox.has-art {
+  min-height: 0;
+}
+
+.yt-player .pf-alt {
+  color: #b0b0b0;
+  background: #181818;
+  border-top-color: #000;
+}
+
 .yt-title {
   padding: 14px 18px 4px;
   font-size: 20px;
@@ -1351,6 +1361,7 @@
   margin: 0 18px;
   display: grid;
   place-items: center;
+  overflow: hidden;
   background:
     repeating-linear-gradient(0deg, #e8eaed 0 1px, transparent 1px 28px),
     repeating-linear-gradient(90deg, #e8eaed 0 1px, transparent 1px 28px),
@@ -1358,6 +1369,12 @@
   border: 1px solid #dadce0;
   color: #9aa0a6;
   font-size: 12px;
+}
+
+.mp-canvas .pf-art {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .mp-reviews {

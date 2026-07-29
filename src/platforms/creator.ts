@@ -3,7 +3,7 @@
 
 import type { Fursona } from "../art/fursona.ts";
 import type { Page } from "../engine/types.ts";
-import { avatar, esc, line, page, rich } from "./kit.ts";
+import { avatar, esc, imgbox, line, page, rich } from "./kit.ts";
 
 export function toyhouseCharacter(opts: {
   readonly sona: Fursona;
@@ -13,6 +13,7 @@ export function toyhouseCharacter(opts: {
   readonly tags: readonly string[];
   readonly profile: string;
   readonly refAlt: string;
+  readonly refArt?: string;
   readonly log?: readonly { when: string; what: string }[];
 }): Page {
   return page(
@@ -23,7 +24,7 @@ export function toyhouseCharacter(opts: {
       <div class="th-body">
         <div class="th-main">
           <h1>${esc(opts.sona.name)}</h1>
-          <div class="pf-imgbox pf-imgbox--big">${line(opts.refAlt)}</div>
+          ${imgbox(opts.refAlt, { art: opts.refArt, big: true })}
           <div class="th-profile">${rich(opts.profile)}</div>
         </div>
         <aside class="th-side">
@@ -101,7 +102,7 @@ export function etsyShop(opts: {
   readonly sales: number;
   readonly since: string;
   readonly announcement: string;
-  readonly items: readonly { title: string; price: string; alt: string }[];
+  readonly items: readonly { title: string; price: string; alt: string; art?: string }[];
   readonly reviews: readonly { by: string; stars: number; when: string; text: string }[];
 }): Page {
   return page(
@@ -124,7 +125,7 @@ export function etsyShop(opts: {
           .map(
             (i) => `
           <figure class="et-item">
-            <div class="pf-imgbox">${line(i.alt)}</div>
+            ${imgbox(i.alt, { art: i.art })}
             <figcaption><span>${line(i.title)}</span><b>${esc(i.price)}</b></figcaption>
           </figure>`,
           )
