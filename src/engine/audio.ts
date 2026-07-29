@@ -154,18 +154,68 @@ export const sfx = {
   },
 };
 
-/* --- ambience ------------------------------------------------------------- */
+/* --- ambience --------------------------------------------------------------
+   A real piece, not a pattern: sixteen bars in an A A' B A" song form over a
+   moving chord progression, with a written melody. The form alternates
+   between a full pass and a sparse one, so the music doesn't literally
+   repeat for about seventy seconds — and even then it repeats the way a
+   lullaby does, not the way a siren does.
+----------------------------------------------------------------------------- */
 
 /** Chapter -> root note. Each chapter drops a little, but stays major. */
 const ROOTS = [0, 261.63, 233.08, 196.0];
-/** Major pentatonic, one octave. Nothing in it can clash, nothing climbs high. */
-const SCALE = [0, 2, 4, 7, 9, 12];
 
 /** Slow. Two-and-a-quarter seconds to a bar — a resting heart rate. */
 const BEAT = 0.56;
 
+/** The major scale, in semitones, for turning scale steps into pitch. */
+const MAJOR = [0, 2, 4, 5, 7, 9, 11];
+
+/** A frequency for a scale step (0 = do, 7 = the octave, negatives allowed). */
+function noteHz(root: number, step: number): number {
+  const octave = Math.floor(step / 7);
+  const degree = ((step % 7) + 7) % 7;
+  return root * Math.pow(2, (MAJOR[degree]! + 12 * octave) / 12);
+}
+
+/**
+ * The harmony, one chord per bar, as scale-degree roots:
+ * A  (I  vi IV V) — home, a little wistful
+ * A' (I  vi ii V) — the same thought, second-guessed
+ * B  (vi IV I  V) — the lift
+ * A" (I  IV V  I) — and back down to land
+ */
+const CHORDS = [0, 5, 3, 4, 0, 5, 1, 4, 5, 3, 0, 4, 0, 3, 4, 0] as const;
+
+/**
+ * The melody: sixteen bars, four beats each, in scale steps from the key
+ * root; null is a rest. Two unhurried notes a bar, phrased as questions in
+ * the A sections and an answer that climbs in B before coming home to do.
+ */
+const MELODY: readonly (readonly (number | null)[])[] = [
+  [4, null, 2, null],   // sol  mi
+  [2, null, 0, null],   // mi   do
+  [5, null, 3, null],   // la   fa
+  [4, null, null, null],// sol —
+  [4, null, 5, null],   // sol  la
+  [7, null, 5, null],   // do'  la
+  [1, null, 3, null],   // re   fa
+  [2, null, 1, null],   // mi   re
+  [7, null, 9, null],   // do'  mi'
+  [8, null, 7, null],   // re'  do'
+  [7, null, 4, null],   // do'  sol
+  [5, null, 6, null],   // la   ti
+  [7, null, 2, null],   // do'  mi
+  [3, null, 1, null],   // fa   re
+  [2, null, 1, null],   // mi   re
+  [0, null, null, null],// do — home
+];
+
 let loopTimer: number | null = null;
-let step = 0;
+/** Where we are in the sixteen-bar form. */
+let bar = 0;
+/** Completed passes through the form. Odd passes play the sparse variation. */
+let pass = 0;
 let chapterRoot = ROOTS[1]!;
 
 /** A long sine swell — the warm bed the rest of the bar lies on. */
@@ -189,46 +239,65 @@ function scheduleBar(): void {
   const audio = ensure();
   if (!audio || !musicBus) return;
   const now = audio.currentTime + 0.05;
-  const bar = 4 * BEAT;
+  const barDur = 4 * BEAT;
+  const chord = CHORDS[bar]!;
+  const next = CHORDS[(bar + 1) % CHORDS.length]!;
+  const sparse = pass % 2 === 1;
 
-  // The bed: root always, the fifth joining on alternating bars so the
-  // harmony breathes instead of droning.
-  pad(chapterRoot / 2, bar, now);
-  if (step % 2 === 1) pad((chapterRoot * 1.5) / 2, bar, now, 0.06);
+  // The bed: the chord's root, plus its fifth on full passes and its third
+  // on sparse ones — when the tune thins out, the harmony gets warmer.
+  pad(noteHz(chapterRoot, chord) / 2, barDur, now);
+  pad(noteHz(chapterRoot, chord + (sparse ? 2 : 4)) / 2, barDur, now, 0.055);
 
   for (let i = 0; i < 4; i += 1) {
     const at = now + i * BEAT;
 
-    // Bass on one and three — a heartbeat, not a march.
+    // Bass follows the chords: root on one and three, and at the end of
+    // each four-bar phrase it walks to wherever the harmony goes next.
     if (i % 2 === 0) {
       tone({
-        freq: chapterRoot / 2,
+        freq: noteHz(chapterRoot, chord) / 2,
         dur: BEAT * 1.7,
         wave: "triangle",
-        gain: 0.38,
+        gain: 0.36,
+        at,
+        bus: musicBus,
+        attack: 0.03,
+      });
+    } else if (i === 3 && bar % 4 === 3 && next !== chord) {
+      tone({
+        freq: noteHz(chapterRoot, next) / 2,
+        dur: BEAT * 0.9,
+        wave: "triangle",
+        gain: 0.22,
         at,
         bus: musicBus,
         attack: 0.03,
       });
     }
 
-    // The melody: a triangle wave kept low in its register (the old square
-    // lead lived an octave higher and cut like a fire alarm), wandering the
-    // pentatonic with rests — roughly two unhurried notes a bar.
-    if ((step + i) % 3 === 0) {
-      const degree = SCALE[(step * 2 + i * 3) % SCALE.length]!;
-      tone({
-        freq: chapterRoot * Math.pow(2, degree / 12),
-        dur: BEAT * 1.5,
-        wave: "triangle",
-        gain: 0.15,
-        at,
-        bus: musicBus,
-        attack: 0.05,
-      });
-    }
+    // The tune. Full passes play it as written; sparse passes keep only the
+    // first note of each bar and let it ring, like humming the half you
+    // remember.
+    const step = MELODY[bar]![i];
+    if (step === null || step === undefined) continue;
+    if (sparse && i > 0) continue;
+    tone({
+      freq: noteHz(chapterRoot, step),
+      dur: sparse ? BEAT * 3.2 : BEAT * 1.6,
+      wave: "triangle",
+      gain: sparse ? 0.12 : 0.15,
+      at,
+      bus: musicBus,
+      attack: 0.05,
+    });
   }
-  step += 1;
+
+  bar += 1;
+  if (bar >= CHORDS.length) {
+    bar = 0;
+    pass += 1;
+  }
 }
 
 export function startAmbience(chapter: number): void {
@@ -242,6 +311,9 @@ export function startAmbience(chapter: number): void {
 
 export function setChapter(chapter: number): void {
   chapterRoot = ROOTS[chapter] ?? ROOTS[1]!;
+  // A new chapter starts its key at the top of the form — a clean phrase,
+  // not a key change mid-sentence.
+  bar = 0;
 }
 
 export function stopAmbience(): void {
@@ -249,4 +321,6 @@ export function stopAmbience(): void {
     window.clearInterval(loopTimer);
     loopTimer = null;
   }
+  bar = 0;
+  pass = 0;
 }
